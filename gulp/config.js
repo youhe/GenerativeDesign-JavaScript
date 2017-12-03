@@ -13,8 +13,11 @@ var tsPath = {
   //   dir.ts + 'hoge/hoge.ts',
   //   dir.ts + 'fuga/fuga.ts'
   // ],
-  'P_1_0_01//js/app':[
+  'P_1_0_01/js/app':[
     dir.ts + 'P_1_0_01/app.ts'
+  ],
+  'P_1_0_01-i/js/app':[
+    dir.ts + 'P_1_0_01-i/app.ts'
   ],
 };
 
