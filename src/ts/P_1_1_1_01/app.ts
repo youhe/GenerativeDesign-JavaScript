@@ -1,6 +1,6 @@
 var context:CanvasRenderingContext2D,
     canvasW:number = 800,
-    canvasH:number = 400,
+    canvasH:number = 800,
     mouseX:number = 0,
     mouseY:number = 0;
 
@@ -16,7 +16,6 @@ function setUp() {
 function draw() {
   requestAnimationFrame(function() {draw()});
 
-  // var h = (mouseY / 2) % 360;
   var stepX = mouseX + 2;
   var stepY = mouseY + 2;
   for (var gridY = 0; gridY < canvasH; gridY += stepY) {

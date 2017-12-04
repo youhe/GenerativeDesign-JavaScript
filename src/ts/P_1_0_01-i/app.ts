@@ -1,6 +1,6 @@
 var context:CanvasRenderingContext2D,
-    canvasW:number = 720,
-    canvasH:number = 720,
+    canvasW:number = 800,
+    canvasH:number = 800,
     mouseX:number = 0,
     mouseY:number = 0;
 

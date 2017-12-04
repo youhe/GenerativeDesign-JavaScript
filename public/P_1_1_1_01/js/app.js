@@ -1,4 +1,4 @@
-var context, canvasW = 800, canvasH = 400, mouseX = 0, mouseY = 0;
+var context, canvasW = 800, canvasH = 800, mouseX = 0, mouseY = 0;
 function setUp() {
     var canvas = document.createElement('canvas');
     document.body.appendChild(canvas);
