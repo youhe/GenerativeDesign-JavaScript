@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_1_2_1_01</title>
+  <style>
+  html, body, h1 {
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 24px;
+  }
+  </style>
+</head>
+<body>
+<h1>P_1_2_1_01</h1>
+<script>
+var context,
+  canvasW = 800,
+  canvasH = 800,
+  mouseX = 0,
+  mouseY = 0,
+  tileCountX = 100,
+  tileCountY = 7,
+  colorsLeft = [],
+  colorsRight = [],
+  interCol,
+  interpolateShortest = 1;
+
+function setUp() {
+    var canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+
+    for (var i = 0; i < 20; i++) {
+        colorsLeft[i] = [];
+        colorsLeft[i][0] = Math.floor(Math.random() * 16 * 16);
+        colorsLeft[i][1] = Math.floor(Math.random() * 16 * 16);
+        colorsLeft[i][2] = Math.floor(Math.random() * 16 * 16);
+
+        colorsRight[i] = [];
+        colorsRight[i][0] = Math.floor(Math.random() * 16 * 16);
+        colorsRight[i][1] = Math.floor(Math.random() * 16 * 16);
+        colorsRight[i][2] = Math.floor(Math.random() * 16 * 16);
+    }
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+    tileCountX = Math.floor(map(mouseX, 0, canvasW, 2, 100));
+    tileCountY = Math.floor(map(mouseY, 0, canvasH, 2, 10));
+    var tileWidth = Math.floor(canvasW / tileCountX);
+    var tileHeight = Math.floor(canvasH / tileCountY);
+
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        var col1 = colorsLeft[gridY];
+        var col2 = colorsRight[gridY];
+        var col1Hsl = rgbToHsl(colorsLeft[gridY][0], colorsLeft[gridY][1], colorsLeft[gridY][2]);
+        var col2Hsl = rgbToHsl(colorsRight[gridY][0], colorsRight[gridY][1], colorsRight[gridY][2]);
+        for (var gridX = 0; gridX < tileCountX ; gridX++) {
+            var amount = map(gridX, 0, tileCountX - 1, 0, 1);
+            if (interpolateShortest == 1) {
+                context.fillStyle = lerpColorHsl(col1Hsl, col2Hsl, amount);
+            } else {
+                context.fillStyle = lerpColorRgb(col1, col2, amount);
+            }
+            var posX = tileWidth * gridX;
+            var posY = tileHeight * gridY;
+            context.fillRect(posX, posY, tileWidth, tileHeight);
+        }
+    }
+}
+
+function lerpColorHsl(c1, c2, val) {
+    var h = map(val, 0, 1, c1[0], c2[0]);
+    var s = map(val, 0, 1, c1[1], c2[1]);
+    var l = map(val, 0, 1, c1[2], c2[2]);
+    return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+}
+
+function lerpColorRgb(c1, c2, val) {
+    var r = ('0' + Math.floor(map(val, 0, 1, c1[0], c2[0])).toString(16)).slice(-2);
+    var g = ('0' + Math.floor(map(val, 0, 1, c1[1], c2[1])).toString(16)).slice(-2);
+    var b = ('0' + Math.floor(map(val, 0, 1, c1[2], c2[2])).toString(16)).slice(-2);
+    return '#' + r + g + b;
+}
+
+function rgbToHsl(r, g, b) {
+    r /= 255, g /= 255, b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0;
+    } else {
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+    return [h * 1000, s * 100, l * 100];
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.onclick = function (e) {
+    interpolateShortest *= -1;
+}
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+setUp();
+draw();
+</script>
+</body>
+</html>
