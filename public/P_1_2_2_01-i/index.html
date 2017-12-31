@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_1_2_2_01-i</title>
+  <style>
+  html, body, h1 {
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_1_2_2_01-i</h1>
+<script>
+var context,
+  canvasW = 800,
+  canvasH = 800,
+  mouseX = 0,
+  mouseY = 0,
+  imgSrc = [
+    './data/P_1_2_2_01-1-1.png',
+    './data/P_1_2_2_01-2-1.png'
+  ],
+  imgCnt = 0,
+  imgCntMax = imgSrc.length,
+  imgColors = [];
+
+function setUp() {
+    var canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+
+    for (var i = 0; i < imgCntMax; i++) {
+      getImgData(i);
+    }
+}
+
+function getImgData(i) {
+  var img = new Image();
+  img.onload = function () {
+    var imgCanvas = document.createElement('canvas');
+    var imgContext = imgCanvas.getContext('2d');
+    imgContext.canvas.width = canvasW;
+    imgContext.canvas.height = canvasH;
+    imgContext.drawImage(img, 0, 0, canvasW, canvasH);
+    var imgColor = imgContext.getImageData(0, 0, canvasW, canvasH);
+    imgColors[i] = imgColor.data;
+  };
+  img.src = imgSrc[i];
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+    if (imgColors[imgCnt]) {
+        var tileCount = Math.floor(canvasW / Math.max(mouseX, 5));
+        var rectSize = (canvasW / tileCount);
+        for (var gridY = 0; gridY < tileCount; gridY++) {
+            for (var gridX = 0; gridX < tileCount; gridX++) {
+                var index = (canvasW * (gridY * rectSize) + (gridX * rectSize)) * 4;
+                var r = imgColors[imgCnt][index + 0];
+                var g = imgColors[imgCnt][index + 1];
+                var b = imgColors[imgCnt][index + 2];
+                context.fillStyle = 'rgb(' + r + ',' + g + ',' + b +')';
+                context.fillRect(gridX * rectSize, gridY * rectSize, rectSize, rectSize);
+            }
+        }
+    }
+}
+
+document.onclick = function (e) {
+    imgCnt++;
+    if (imgCnt == imgCntMax) imgCnt = 0;
+    console.log('imgCnt', imgCnt);
+}
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+setUp();
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_1_2_2_01</title>
+  <style>
+  html, body, h1 {
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_1_2_2_01</h1>
+<script>
+var canvas,
+    canvasW = 800,
+    canvasH = 800,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    imgSrc = './data/P_1_2_2_01-1-1.png',
+    // imgSrc = './data/pic1.jpg',
+    imgColors,
+    sortMode = 0,
+    sortModeMax = 3,
+    canvasHSL_H,
+    canvasHSL_S,
+    canvasHSL_L;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+
+    getImgData();
+}
+
+function getImgData() {
+  var img = new Image();
+  img.onload = function () {
+    var imgCanvas = document.createElement('canvas');
+    var imgContext = imgCanvas.getContext('2d');
+    imgContext.canvas.width = canvasW;
+    imgContext.canvas.height = canvasH;
+    imgContext.drawImage(img, 0, 0, canvasW, canvasH);
+    var imgColor = imgContext.getImageData(0, 0, canvasW, canvasH);
+    imgColors = imgColor.data;
+
+    canvasHSL_H = createCanvas('h');
+    canvasHSL_S = createCanvas('s');
+    canvasHSL_L = createCanvas('l');
+
+    context.drawImage(canvasHSL_H, 0, 0, canvasW, canvasH);
+  };
+  img.src = imgSrc;
+}
+
+function createCanvas(mode) {
+    var hslColors = [];
+    for (var gridY = 0; gridY < canvasH; gridY++) {
+        for (var gridX = 0; gridX < canvasW; gridX++) {
+          var index = (canvasW * gridY + gridX) * 4;
+          var r = imgColors[index + 0];
+          var g = imgColors[index + 1];
+          var b = imgColors[index + 2];
+          hslColors.push(rgbToHsl(r, g, b));
+        }
+    }
+
+    var sortIndex;
+    switch (mode) {
+        case 'h': sortIndex = 0; break;
+        case 's': sortIndex = 1; break;
+        case 'l': sortIndex = 2; break;
+    }
+
+    hslColors.sort(function(a, b) {
+        if (a[sortIndex] < b[sortIndex]) return -1;
+        if (a[sortIndex] > b[sortIndex]) return 1;
+        return 0;
+    });
+
+    var hslCanvas = document.createElement('canvas');
+    var hslContext = hslCanvas.getContext('2d');
+    hslContext.canvas.width = canvasW;
+    hslContext.canvas.height = canvasH;
+    for (var gridY = 0; gridY < canvasH; gridY++) {
+        for (var gridX = 0; gridX < canvasW; gridX++) {
+            var index = canvasH * gridY + gridX;
+            var hsl = 'hsl(' + hslColors[index][0] + ',' + hslColors[index][1] + '%,' + hslColors[index][2] + '%)';
+            hslContext.fillStyle = hsl;
+            hslContext.fillRect(gridX, gridY, 1, 1);
+        }
+    }
+
+    return hslCanvas;
+}
+
+function rgbToHsl(r, g, b) {
+    var max = Math.max(r, g, b),
+        min = Math.min(r, g, b);
+    var h,
+        s,
+        l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0;
+    } else {
+        var cnt = (max + min) / 2;
+        s = cnt <= 127 ? (max - min) / (max + min) : (max - min) / (510 - max - min);
+        switch (max) {
+            case r: h = 60 * ((g - b) / (max - min)); break;
+            case g: h = 60 * ((b - r) / (max - min)) + 120; break;
+            case b: h = 60 * ((r - g) / (max - min)) + 240; break;
+        }
+        if (h < 0) h += 360;
+    }
+    return [h, s * 100, (l / 255) * 100];
+}
+
+document.onclick = function (e) {
+    sortMode++;
+    if (sortMode == sortModeMax) sortMode = 0;
+    console.log('sortMode', sortMode);
+
+    switch (sortMode) {
+        case 0: context.drawImage(canvasHSL_H, 0, 0, canvasW, canvasH); break;
+        case 1: context.drawImage(canvasHSL_S, 0, 0, canvasW, canvasH); break;
+        case 2: context.drawImage(canvasHSL_L, 0, 0, canvasW, canvasH); break;
+    }
+
+}
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+</script>
+</body>
+</html>
