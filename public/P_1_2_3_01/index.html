@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_1_2_3_01</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_1_2_3_01</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var canvas,
+    canvasW = 800,
+    canvasH = 800,
+    context,
+    mouseX = 657,
+    mouseY = 321,
+    tileCountX = 50,
+    tileCountY = 10,
+    hueValues = [],
+    saturationValues = [],
+    brightnessValues = [],
+    rgbValues = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+
+    colorsSetRandom();
+    colorsSetRgb();
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, canvasW, canvasH);
+
+    var currentTileCountX = Math.floor(map(mouseX, 0, canvasW, 1, tileCountX));
+    var currentTileCountY = Math.floor(map(mouseY, 0, canvasH, 1, tileCountY));
+    var tileWidth = Math.floor(canvasW / currentTileCountX);
+    var tileHeight = Math.floor(canvasH / currentTileCountY);
+
+    var counter = 0;
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        for (var gridX = 0; gridX < tileCountX; gridX++) {
+            var posX = Math.floor(tileWidth * gridX);
+            var posY = Math.floor(tileHeight * gridY);
+            var index = counter % currentTileCountX;
+            context.fillStyle = rgbValues[index];
+            context.fillRect(posX, posY, tileWidth, tileHeight);
+            counter++;
+        }
+    }
+}
+
+function colorsSetRandom() {
+    console.log('set', 'colorsSetRandom');
+    for (var i = 0; i < tileCountX; i++) {
+        hueValues[i] = Math.floor(Math.random() * 360);
+        saturationValues[i] = Math.floor(Math.random() * 100);
+        brightnessValues[i] = Math.floor(Math.random() * 100);
+    }
+}
+
+function colorsSetConstLightness() {
+    console.log('set', 'colorsSetConstLightness');
+    for (var i = 0; i < tileCountX; i++) {
+        hueValues[i] = Math.floor(Math.random() * 360);
+        saturationValues[i] = Math.floor(Math.random() * 100);
+        brightnessValues[i] = 100;
+    }
+}
+
+function colorsSetConstSaturation() {
+    console.log('set', 'colorsSetConstSaturation');
+    for (var i = 0; i < tileCountX; i++) {
+        hueValues[i] = Math.floor(Math.random() * 360);
+        saturationValues[i] = 100;
+        brightnessValues[i] = Math.floor(Math.random() * 100);
+    }
+}
+
+function colorsSetSkyBlue() {
+    console.log('set', 'colorsSetSkyBlue');
+    for (var i = 0; i < tileCountX; i++) {
+        hueValues[i] = 195;
+        saturationValues[i] = Math.floor(Math.random() * 100);
+        brightnessValues[i] = 100;
+    }
+}
+
+function colorsSetCherryBlossoms() {
+    console.log('set', 'colorsSetCherryBlossoms');
+    for (var i = 0; i < tileCountX; i++) {
+        hueValues[i] = 320;
+        saturationValues[i] = Math.floor(Math.random() * 70);
+        brightnessValues[i] = 100;
+    }
+}
+
+function colorsSetHalfHue1() {
+    console.log('set', 'colorsSetHalfHue1');
+    for (var i = 0; i < tileCountX; i++) {
+        hueValues[i] = Math.floor(Math.random() * 180);
+        saturationValues[i] = Math.floor(Math.random() * 100);
+        brightnessValues[i] = Math.floor(Math.random() * 100);
+    }
+}
+
+function colorsSetHalfHue2() {
+    console.log('set', 'colorsSetHalfHue2');
+    for (var i = 0; i < tileCountX; i++) {
+        hueValues[i] = Math.floor(Math.random() * 180) + 180;
+        saturationValues[i] = Math.floor(Math.random() * 100);
+        brightnessValues[i] = Math.floor(Math.random() * 100);
+    }
+}
+
+function colorsSetMonochro() {
+  console.log('set', 'colorsSetMonochro');
+  for (var i = 0; i < tileCountX; i++) {
+      hueValues[i] = 0;
+      saturationValues[i] = 0;
+      brightnessValues[i] = Math.floor(Math.random() * 100);
+  }
+}
+
+function colorsSetRgb() {
+    for (var i = 0; i < tileCountX; i++) {
+        var color = hsvToRgb(hueValues[i], saturationValues[i], brightnessValues[i]);
+        rgbValues[i] = 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+    }
+}
+
+function hsvToRgb(h, s, v) {
+  h /= 360; s /= 100; v /= 100;
+  var r, g, b, i, f, p, q, t;
+  i = Math.floor(h * 6);
+  f = h * 6 - i;
+  p = v * (1 - s);
+  q = v * (1 - f * s);
+  t = v * (1 - (1 - f) * s);
+  switch (i % 6) {
+      case 0: r = v, g = t, b = p; break;
+      case 1: r = q, g = v, b = p; break;
+      case 2: r = p, g = v, b = t; break;
+      case 3: r = p, g = q, b = v; break;
+      case 4: r = t, g = p, b = v; break;
+      case 5: r = v, g = p, b = q; break;
+  }
+  return {
+      r: Math.round(r * 255),
+      g: Math.round(g * 255),
+      b: Math.round(b * 255)
+  };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    switch (key) {
+        case '1': colorsSetRandom(); break;
+        case '2': colorsSetConstLightness(); break;
+        case '3': colorsSetConstSaturation(); break;
+        case '4': colorsSetSkyBlue(); break;
+        case '5': colorsSetCherryBlossoms(); break;
+        case '6': colorsSetHalfHue1(); break;
+        case '7': colorsSetHalfHue2(); break;
+        case '8': colorsSetMonochro(); break;
+        // case '4': colorsSetSkyBlue(); break;
+    }
+    colorsSetRgb();
+});
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
