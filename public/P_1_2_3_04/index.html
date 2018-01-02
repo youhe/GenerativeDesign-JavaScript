@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_1_2_3_04</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_1_2_3_04</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var canvas,
+    canvasW = 800,
+    canvasH = 800,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    hueValues = [],
+    saturationValues = [],
+    brightnessValues = [],
+    rgbValues = [],
+    colorCount = 20;;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+}
+
+function draw() {
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, canvasW, canvasH);
+
+    for (var i = 0; i < colorCount; i++) {
+        // if (i % 2 == 0) {
+        //     hueValues[i] = Math.random() * 180;
+        //     saturationValues[i] = Math.random() * 100;
+        //     brightnessValues[i] = Math.random() * 100;
+        // } else {
+        //     hueValues[i] = Math.random() * 180 + 180;
+        //     saturationValues[i] = Math.random() * 100;
+        //     brightnessValues[i] = Math.random() * 100;
+        // }
+        hueValues[i] = 195;
+        saturationValues[i] = Math.random() * 100;
+        brightnessValues[i] = 100;
+    }
+    colorsSetRgb();
+
+    var counter = 0;
+    var rowCount = Math.floor(Math.random() * 25) + 5;
+    var rowHeight = canvasH / rowCount;
+
+    for (var i = 0; i < rowCount; i++) {
+        var partCount = i + 1;
+        var parts = [];
+
+        for (var ii = 0; ii < partCount; ii++) {
+            if (Math.random() < 0.075) {
+                var fragments = Math.floor(Math.random() * 18) + 2;
+                partCount = partCount + fragments;
+                for(var iii = 0; iii < fragments; iii++) {
+                    parts.push(Math.random() * 2);
+                }
+            } else {
+                parts.push(Math.random() * 18 + 2);
+            }
+        }
+
+        var sumPartsTotal = 0;
+        for (var ii = 0; ii < partCount; ii++)
+          sumPartsTotal += parts[ii];
+
+        var sumPartsNow = 0;
+        for(var ii = 0; ii < parts.length; ii++) {
+            var index = counter % colorCount;
+
+            sumPartsNow += parts[ii];
+            var x = map(sumPartsNow, 0, sumPartsTotal, 0, canvasW);
+            var y = rowHeight * i;
+            var w = map(parts[ii], 0, sumPartsTotal, 0, canvasW) * -1;
+            var h = rowHeight * 1.5;
+
+            if (Math.random() < .7) {
+                context.beginPath();
+                context.fillStyle = 'rgba('+rgbValues[index].r+','+rgbValues[index].g+','+rgbValues[index].b+', .7)';
+                context.closePath();
+                context.fillRect(x, y, w, h);
+            }
+            counter++;
+        }
+    }
+}
+
+function colorsSetRgb() {
+    for (var i = 0; i < colorCount; i++) {
+        rgbValues[i] = hsvToRgb(hueValues[i], saturationValues[i], brightnessValues[i]);
+    }
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.onclick = function (e) {
+    draw();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
