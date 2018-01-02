@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_0_01</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_0_01</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var canvas,
+    canvasW = 800,
+    canvasH = 800,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    colorCount = 20;;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, canvasW, canvasH);
+
+    var circleResolution = map(mouseY, 0, canvasH, 2, 80);
+    var radius = mouseX - canvasW / 2 + 0.5;
+    var angle = (Math.PI / 180 * 180) / circleResolution;
+
+    context.lineWidth = mouseY / 20;
+    for (var i = 0; i <= circleResolution; i++) {
+        var x = Math.cos(angle * i) * radius;
+        var y = Math.sin(angle * i) * radius;
+        var w = map(mouseX, 0, canvasW, 10, canvasW * .7);
+
+        context.save();
+        context.translate(canvasW * .5, canvasH * .5);
+        context.rotate(angle * i);
+        context.strokeRect(w * -.5, 0, w, 0);
+        context.restore();
+    }
+}
+
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
