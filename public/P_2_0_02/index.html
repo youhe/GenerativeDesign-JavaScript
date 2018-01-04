@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_0_02</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_0_02</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    mousePressed = false;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, width, height);
+
+    context.strokeStyle = '#000';
+    context.globalAlpha = .1;
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    if (mousePressed) {
+
+      var circleResolution = Math.floor(map(mouseY + 100, 0, height, 2, 10));
+      var radius = mouseX - width / 2 + 0.5;
+      var angle = (Math.PI / 180 * 360) / circleResolution;
+      console.log(circleResolution, angle);
+
+      context.save();
+      context.translate(width * .5, height * .5);
+      context.beginPath();
+      for (var i = 0; i <= circleResolution; i++) {
+          var x = Math.cos(angle * i) * radius;
+          var y = Math.sin(angle * i) * radius;
+          if (i == 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+      }
+      context.stroke();
+      context.restore();
+    }
+}
+
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.onmousedown = function (e) {
+    mousePressed = true;
+};
+
+document.onmouseup = function (e) {
+    mousePressed = false;
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
