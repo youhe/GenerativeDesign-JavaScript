@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_1_1_01</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_1_1_01</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCount = 20,
+    toggles = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+    context.lineJoin = 'miter';
+
+    setToggles();
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, width, height);
+
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+        for (var gridX = 0; gridX < tileCount; gridX++) {
+
+            var posX = width / tileCount * gridX;
+            var posY = height / tileCount * gridY;
+
+            if (toggles[gridY * tileCount + gridX] < .5) {
+                context.lineWidth = Math.max(mouseX / 20, 1);
+                context.beginPath();
+                context.moveTo(posX, posY);
+                context.lineTo(posX + width / tileCount, posY + height / tileCount);
+                context.stroke();
+            }
+            if (.5 <= toggles[gridY * tileCount + gridX]) {
+                context.lineWidth = Math.max(mouseY / 20, 1);
+                context.beginPath();
+                context.moveTo(posX, posY + width / tileCount);
+                context.lineTo(posX + height / tileCount, posY);
+                context.stroke();
+            }
+        }
+    }
+}
+
+function setToggles() {
+  for (var i = 0; i < 10000; i++) {
+      toggles[i] = Math.random();
+  }
+}
+
+document.onclick = function (e) {
+    setToggles();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
