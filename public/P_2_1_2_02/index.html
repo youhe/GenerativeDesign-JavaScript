@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_1_2_02</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_1_2_02</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCount = 20,
+    randomPosition = [],
+    moduleColorBackground = '#000',
+    moduleColorForeground = '#fff',
+    moduleAlphaBackground = 1,
+    moduleAlphaForeground = 1,
+    moduleRadiusBackground = 12,
+    moduleRadiusForeground = 6;
+
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    setRandomPosition();
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, width, height);
+
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+        for (var gridX = 0; gridX < tileCount; gridX++) {
+
+            var posX = width / tileCount * gridX + 20;
+            var posY = height / tileCount * gridY + 20;
+
+            posX = posX + map(mouseX, 0, width, 0, randomPosition[gridY * tileCount + gridX].x);
+            posY = posY + map(mouseY, 0, width, 0, randomPosition[gridY * tileCount + gridX].y);
+
+            context.save();
+            context.translate(posX, posY);
+            context.fillStyle = moduleColorBackground;
+            context.globalAlpha = moduleAlphaForeground;
+            context.beginPath();
+            context.arc(
+                0, 0,
+                moduleRadiusBackground, moduleRadiusBackground,
+                0, Math.PI / 180 * 360, false
+            );
+            context.fill();
+            context.restore();
+        }
+    }
+
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+        for (var gridX = 0; gridX < tileCount; gridX++) {
+
+            var posX = width / tileCount * gridX + 20;
+            var posY = height / tileCount * gridY + 20;
+
+
+            context.save();
+            context.translate(posX, posY);
+            context.fillStyle = moduleColorForeground;
+            context.globalAlpha = moduleAlphaBackground;
+            context.beginPath();
+            context.arc(
+                0, 0,
+                moduleRadiusForeground, moduleRadiusForeground,
+                0, Math.PI / 180 * 360, false
+            );
+            context.fill();
+            context.restore();
+        }
+    }
+}
+
+function setRandomPosition() {
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+        for (var gridX = 0; gridX < tileCount; gridX++) {
+            randomPosition[gridY * tileCount + gridX] = {
+                x: Math.random() * 80 - 40,
+                y: Math.random() * 80 - 40,
+            };
+        }
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == '1') {
+        moduleColorBackground = 'rgb(273, 73, 51)';
+    }
+    if (key == '2') {
+        moduleColorForeground = 'rgb(0, 0, 0)';
+    }
+    if (key == '3') {
+        moduleAlphaBackground = .5;
+        moduleAlphaForeground = .5;
+    }
+
+    if (key == '0') {
+        moduleColorBackground = '#000';
+        moduleColorForeground = '#fff';
+        moduleAlphaBackground = 1;
+        moduleAlphaForeground = 1;
+    }
+
+    if (key == 'ArrowUp') {
+        moduleRadiusBackground += 2;
+    }
+
+    if (key == 'ArrowDown') {
+        moduleRadiusBackground = Math.max(moduleRadiusBackground - 2, 10);
+    }
+
+    if (key == 'ArrowLeft') {
+        moduleRadiusForeground = Math.max(moduleRadiusForeground - 2, 5);
+    }
+
+    if (key == 'ArrowRight') {
+        moduleRadiusForeground += 2;
+    }
+});
+
+document.onclick = function (e) {
+    setRandomPosition();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
