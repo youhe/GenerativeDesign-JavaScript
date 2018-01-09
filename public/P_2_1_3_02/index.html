@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_1_3_02</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_1_3_02</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCountX = 5,
+    tileCountY = 5,
+    tileWidth,
+    tileHeight,
+    count = 10,
+    drawMode = 1,
+    backgroundColor = '#fff',
+    lineWeight = 1,
+    strokeColor = '#000';
+
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    tileWidth = width / tileCountX;
+    tileHeight = height / tileCountY;
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    context.fillStyle = backgroundColor;
+    context.fillRect(0, 0, width, height);
+
+    tileCountX = Math.floor(mouseX / 30) + 1;
+    tileCountY = Math.floor(mouseY / 30) + 1;
+
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        for (var gridX = 0; gridX < tileCountX; gridX++) {  
+            var tileWidth = width / tileCountX;
+            var tileHeight = height / tileCountY;
+            var posX = tileWidth * gridX;
+            var posY = tileHeight * gridY;
+
+            var x1 = tileWidth / 2;
+            var y1 = tileHeight / 2;
+            var x2 = 0;
+            var y2 = 0;
+
+            for(var side = 0; side < 4; side++) {
+                for(var i = 0; i < count; i++) {
+
+                    if (side == 0) {
+                        x2 += tileWidth / count;
+                        y2 = 0;
+                    }
+                    if (side == 1) {
+                        x2 = tileWidth;
+                        y2 += tileHeight / count;
+                    }
+                    if (side == 2) {
+                        x2 -= tileWidth / count;
+                        y2 = tileHeight;
+                    }
+                    if (side == 3) {
+                        x2 = 0;
+                        y2 -= tileHeight / count;
+                    }
+
+
+                    switch(drawMode) {
+                        case 1:
+                            backgroundColor = '#fff';
+                            strokeColor = '#000';
+                            lineWeight = 1;
+                            break;
+                        case 2:
+                            backgroundColor = '#fff';
+                            strokeColor = '#000';
+                            if (i < count / 2){
+                                lineWeight += 1;
+                            } else {
+                                lineWeight -= 1;
+                            }
+                            break;
+                        case 3:
+                            backgroundColor = '#000';
+                            strokeColor = '#fff';
+                            lineWeight = Math.max(mouseX / 100, 1);
+                            break;
+                    }
+
+                    context.strokeStyle = strokeColor;
+                    context.lineWidth = lineWeight;
+                    context.save();
+                    context.translate(posX, posY);
+                    context.beginPath();
+                    context.moveTo(x1, y1);
+                    context.lineTo(x2, y2);
+                    context.stroke();
+                    context.restore();
+                }
+            }
+        }
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == '1') {
+        drawMode = 1;
+    }
+    if (key == '2') {
+        drawMode = 2;
+    }
+    if (key == '3') {
+        drawMode = 3;
+    }
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
