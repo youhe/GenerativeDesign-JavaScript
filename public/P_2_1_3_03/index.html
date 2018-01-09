@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_1_3_03</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_1_3_03</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCountX = 6,
+    tileCountY = 6,
+    count = 0,
+    drawMode = 1;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, width, height);
+
+    count = Math.floor(mouseX / 20) + 5;
+    var para = mouseY / height - 0.5;
+
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        for (var gridX = 0; gridX < tileCountX; gridX++) {  
+            var tileWidth = width / tileCountX;
+            var tileHeight = height / tileCountY;
+            var posX = tileWidth * gridX + (tileWidth / 2);
+            var posY = tileHeight * gridY + (tileHeight / 2);
+
+            context.save();
+            context.translate(posX, posY);
+            switch (drawMode) {
+                case 1:
+                    context.translate(-tileWidth / 2, -tileHeight / 2);
+                    for(var i = 0; i < count; i++) {
+                        context.beginPath();
+                        context.moveTo(0, (para + 0.5) * tileHeight);
+                        context.lineTo(tileWidth, i * tileHeight / count);
+                        context.stroke();
+
+                        context.beginPath();
+                        context.moveTo(0, i * tileHeight / count);
+                        context.lineTo(tileWidth, tileHeight - (para + .5) * tileHeight);
+                        context.stroke();
+                    }
+                    break;
+                case 2:
+                    for(var i=0; i<=count; i++) {
+                        context.beginPath();
+                        context.moveTo(para*tileWidth, para*tileHeight);
+                        context.lineTo(tileWidth/2, (i/count-0.5)*tileHeight);
+                        context.stroke();
+
+                        context.beginPath();
+                        context.moveTo(para*tileWidth, para*tileHeight);
+                        context.lineTo(-tileWidth/2, (i/count-0.5)*tileHeight);
+                        context.stroke();
+
+                        context.beginPath();
+                        context.moveTo(para*tileWidth, para*tileHeight);
+                        context.lineTo((i/count-0.5)*tileWidth, tileHeight/2);
+                        context.stroke();
+
+                        context.beginPath();
+                        context.moveTo(para*tileWidth, para*tileHeight);
+                        context.lineTo((i/count-0.5)*tileWidth, -tileHeight/2);
+                        context.stroke();
+                    }
+                    break;
+                case 3:
+                    for(var i=0; i<=count; i++) {
+                        context.beginPath();
+                        context.moveTo(0, para*tileHeight);
+                        context.lineTo(tileWidth/2, (i/count-0.5)*tileHeight);
+                        context.stroke();
+
+                        context.beginPath();
+                        context.moveTo(0, para*tileHeight);
+                        context.lineTo(-tileWidth/2, (i/count-0.5)*tileHeight);
+                        context.stroke();
+
+                        context.beginPath();
+                        context.moveTo(0, para*tileHeight);
+                        context.lineTo((i/count-0.5)*tileWidth, tileHeight/2);
+                        context.stroke();
+
+                        context.beginPath();
+                        context.moveTo(0, para*tileHeight);
+                        context.lineTo((i/count-0.5)*tileWidth, -tileHeight/2);
+                        context.stroke();
+
+                    }
+                    break;
+            }
+            context.restore();
+        }
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == '1') drawMode = 1;
+    if (key == '2') drawMode = 2;
+    if (key == '3') drawMode = 3;
+
+    if (key == 'ArrowLeft') {
+        tileCountX = Math.max(tileCountX - 1, 1);
+    }
+    if (key == 'ArrowRight') {
+        tileCountX = Math.min(tileCountX + 1, 20);
+    }
+
+    if (key == 'ArrowDown') {
+        tileCountY = Math.max(tileCountY - 1, 1);
+    }
+    if (key == 'ArrowUp') {
+        tileCountY = Math.min(tileCountY + 1, 20);
+    }
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
