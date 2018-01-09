@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_1_3_01</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_1_3_01</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCountX = 10,
+    tileCountY = 10,
+    tileWidth,
+    tileHeight,
+    circleCount,
+    endSize,
+    endOffset,
+    randomPosition = [];
+
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    tileWidth = width / tileCountX;
+    tileHeight = height / tileCountY;
+
+    setRandomPosition();
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, width, height);
+
+    circleCount = mouseX / 30 + 1;
+    endSize = map(mouseX, 0, width, tileWidth / 2.0, 0);
+    endOffset = map(mouseY, 0, height, 0, (tileWidth - endSize) / 2);
+
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        for (var gridX = 0; gridX < tileCountX; gridX++) {
+            context.save();
+            context.translate(
+                tileWidth * gridX + (tileWidth / 2),
+                tileHeight * gridY + (tileWidth / 2)
+            );
+            context.scale(1, tileHeight / tileWidth);
+
+            var toggle = randomPosition[gridY * tileCountX + gridX].r;
+            if (toggle == 0) context.rotate(0);
+            if (toggle == 1) context.rotate(Math.PI / 2);
+            if (toggle == 2) context.rotate(Math.PI);
+            if (toggle == 3) context.rotate(Math.PI * 2);
+
+            for (var i = 0; i < circleCount; i++) {
+                var diameter = map(i, 0, circleCount, tileWidth, endSize);
+                var offset = map(i, 0, circleCount - 1, 0, endOffset);
+                context.beginPath();
+                context.arc(
+                    offset, 0, diameter / 2,
+                    0, Math.PI / 180 * 360, false
+                );
+                context.stroke();
+            }
+            context.restore();
+        }
+    }
+}
+
+function setRandomPosition() {
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        for (var gridX = 0; gridX < tileCountX; gridX++) {
+            randomPosition[gridY * tileCountX + gridX] = {
+                r: Math.floor(Math.random() * 4)
+            };
+        }
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+});
+
+document.onclick = function (e) {
+    setRandomPosition();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
