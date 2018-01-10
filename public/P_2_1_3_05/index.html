@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>P_2_1_3_05</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<h1>P_2_1_3_05</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCountX = 10,
+    tileCountY = 10,
+    colorStep = 6,
+    endSize = 0,
+    stepSize = 30,
+    randomDirection = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    setRandomDirection();
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+
+    stepSize = mouseX / 10;
+    endSize = mouseY / 10;
+    context.globalAlpha = .1;
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        for (var gridX = 0; gridX < tileCountX; gridX++) {
+
+            var tileWidth = Math.floor(width / tileCountX);
+            var tileHeight = Math.floor(height / tileCountY);
+            var posX = tileWidth * gridX + (tileWidth / 2);
+            var posY = tileHeight * gridY + (tileHeight / 2);
+
+            switch(randomDirection[gridY * tileCountX + gridX]) {
+                case 0: 
+                    for (var i = 0; i < stepSize; i++) {
+                        var diameter = map(i, 0, stepSize, tileWidth, endSize) / 2;
+                        var color = 255 - (i * colorStep);
+                        var colorRGB = 'rgb('+color+', '+color+', '+color+')';
+                        context.fillStyle = colorRGB;
+                        context.beginPath();
+                        context.arc(posX+i, posY, diameter, 0, Math.PI / 180 * 360, false);
+                        context.fill();
+                    }
+                    break;
+                case 1: 
+                    for (var i = 0; i < stepSize; i++) {
+                        var diameter = map(i, 0, stepSize, tileHeight, endSize) / 2;
+                        var color = 255 - (i * colorStep);
+                        var colorRGB = 'rgb('+color+', '+color+', '+color+')';
+                        context.fillStyle = colorRGB;
+                        context.beginPath();
+                        context.arc(posX, posY+i, diameter, 0, Math.PI / 180 * 360, false);
+                        context.fill();
+                    }
+                    break;
+                case 2: 
+                    for (var i = 0; i < stepSize; i++) {
+                        var diameter = map(i, 0, stepSize, tileWidth, endSize) / 2;
+                        var color = 255 - (i * colorStep);
+                        var colorRGB = 'rgb('+color+', '+color+', '+color+')';
+                        context.fillStyle = colorRGB;
+                        context.beginPath();
+                        context.arc(posX-i, posY, diameter, 0, Math.PI / 180 * 360, false);
+                        context.fill();
+                    }
+                    break;
+                case 3: 
+                    for (var i = 0; i < stepSize; i++) {
+                        var diameter = map(i, 0, stepSize, tileHeight, endSize) / 2;
+                        var color = 255 - (i * colorStep);
+                        var colorRGB = 'rgb('+color+', '+color+', '+color+')';
+                        context.fillStyle = colorRGB;
+                        context.beginPath();
+                        context.arc(posX, posY-i, diameter, 0, Math.PI / 180 * 360, false);
+                        context.fill();
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+function setRandomDirection() {
+    for (var gridY = 0; gridY < tileCountY; gridY++) {
+        for (var gridX = 0; gridX < tileCountX; gridX++) {
+            randomDirection[gridY * tileCountX + gridX] = Math.floor(Math.random() * 4);
+        }
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+});
+
+document.onclick = function (e) {
+    setRandomDirection();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
