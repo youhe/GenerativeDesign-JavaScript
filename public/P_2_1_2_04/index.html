@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>P_2_1_2_04</title>
+  <style>
+  html, body, h1 {
+    margin: 0; padding: 0;
+  }
+  h1 {
+    position: absolute;
+    left: 20px; top: 20px;
+    font-size: 24px;
+    user-select: none;
+  }
+  </style>
+</head>
+<body>
+<h1>P_2_1_2_04</h1>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCount = 20,
+    rectSize = 40,
+    randomPosition = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+    context.globalAlpha = .3;
+
+    setRandomPosition();
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, width, height);
+
+    context.fillStyle = '#4169e1';
+    context.strokeStyle = '#000';
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+        for (var gridX = 0; gridX < tileCount; gridX++) {
+            var posX = width / tileCount * gridX;
+            var posY = height / tileCount * gridY;
+
+            var shiftPosition = randomPosition[gridY * tileCount + gridX];
+            var shiftX1 = map(mouseX, 0, 800, 0, shiftPosition.x1);
+            var shiftY1 = map(mouseY, 0, 800, 0, shiftPosition.y1);
+            var shiftX2 = map(mouseX, 0, 800, 0, shiftPosition.x2);
+            var shiftY2 = map(mouseY, 0, 800, 0, shiftPosition.y2);
+            var shiftX3 = map(mouseX, 0, 800, 0, shiftPosition.x3);
+            var shiftY3 = map(mouseY, 0, 800, 0, shiftPosition.y3);
+            var shiftX4 = map(mouseX, 0, 800, 0, shiftPosition.x4);
+            var shiftY4 = map(mouseY, 0, 800, 0, shiftPosition.y4);
+
+            context.beginPath();
+            context.moveTo(posX + shiftX1, posY + shiftY1);
+            context.lineTo(posX + rectSize + shiftX2, posY + shiftY2);
+            context.lineTo(posX + rectSize + shiftX3, posY + rectSize + shiftY3);
+            context.lineTo(posX + shiftX4, posY + rectSize + shiftY4);
+            context.lineTo(posX + shiftX1, posY + shiftY1);
+            context.fill();
+        }
+    }
+}
+
+function setRandomPosition() {
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+        for (var gridX = 0; gridX < tileCount; gridX++) {
+            randomPosition[gridY * tileCount + gridX] = {
+                x1: Math.random() * 60 - 30,
+                y1: Math.random() * 60 - 30,
+                x2: Math.random() * 60 - 30,
+                y2: Math.random() * 60 - 30,
+                x3: Math.random() * 60 - 30,
+                y3: Math.random() * 60 - 30,
+                x4: Math.random() * 60 - 30,
+                y4: Math.random() * 60 - 30,
+            };
+        }
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+});
+
+document.onclick = function (e) {
+    setRandomPosition();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
