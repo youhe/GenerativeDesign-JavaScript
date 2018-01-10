@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>P_2_2_1_01</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<h1>P_2_2_1_01</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+position x: drawing speed<br>
+<br>
+KEYS<br>
+S: save png<br>
+</p>
+<script src="../libs/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    NORTH = 0,
+    NORTHEAST = 1,
+    EAST = 2,
+    SOUTHEAST = 3,
+    SOUTH = 4,
+    SOUTHWEST = 5,
+    WEST = 6,
+    NORTHWEST= 7,
+    stepSize = 1,
+    diameter = 1,
+    direction,
+    posX,
+    posY;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    context.fillStyle = '#000';
+    context.globalAlpha = .1;
+
+    posX = width/2;
+    posY = height/2;
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    for (var i = 0; i <= mouseX; i++) {
+        direction = Math.floor(Math.random() * 8);
+
+        if (direction == NORTH) {  
+            posY -= stepSize;  
+        } else if (direction == NORTHEAST) {
+            posX += stepSize;
+            posY -= stepSize;
+        } else if (direction == EAST) {
+            posX += stepSize;
+        } else if (direction == SOUTHEAST) {
+            posX += stepSize;
+            posY += stepSize;
+        } else if (direction == SOUTH) {
+            posY += stepSize;
+        } else if (direction == SOUTHWEST) {
+            posX -= stepSize;
+            posY += stepSize;
+        } else if (direction == WEST) {
+            posX -= stepSize;
+        } else if (direction == NORTHWEST) {
+            posX -= stepSize;
+            posY -= stepSize;
+        }
+
+        if (posX > width) posX = 0;
+        if (posX < 0) posX = width;
+        if (posY < 0) posY = height;
+        if (posY > height) posY = 0;
+
+        context.beginPath();
+        context.arc(
+            posX+stepSize/2, posY+stepSize/2, diameter,
+            0, Math.PI / 180 * 360, false
+        );
+        context.fill();
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>

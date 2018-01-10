@@ -8,5 +8,9 @@ h1 {
   user-select: none;
 }
 .operation {
-  font-size: 16px;
+  position: absolute;
+  left: 20px;
+  top: 60px;
+  font-size: 14px;
+  user-select: none;
 }
