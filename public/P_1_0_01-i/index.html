@@ -1,57 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>P_1_0_01 - i</title>
-  <style>
-  html, body, h1 {
-    margin: 0;
-    padding: 0;
-  }
-  h1 {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    font-size: 24px;
-  }
-  </style>
+<meta charset="UTF-8">
+<title>P_1_0_01 - i</title>
+<link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-  <h1>P_1_0_01 - i</h1>
-  <script>
-  var context,
-      canvasW = 800,
-      canvasH = 800,
-      mouseX = 0,
-      mouseY = 0;
-  function setUp() {
-      var canvas = document.createElement('canvas');
-      document.body.appendChild(canvas);
-      context = canvas.getContext('2d');
-      context.canvas.width = canvasW;
-      context.canvas.height = canvasH;
-  }
-  function draw() {
-      requestAnimationFrame(function () { draw(); });
-      var h = (mouseY / 2) % 360;
-      context.fillStyle = 'hsl(' + h + ', 100%, 50%)';
-      context.fillRect(0, 0, canvasW, canvasH);
-      var l = mouseY / (canvasW / 100);
-      context.fillStyle = 'hsl(0, 0%, ' + l + '%)';
-      var wh = (mouseX * 2) - canvasW;
-      var xy = (canvasW / 2) - (wh / 2);
-      context.fillRect(xy * 0.5, xy * 0.5, wh * 0.5, wh * 0.5);
-      context.fillRect(xy * 0.5 + (canvasW * .5), xy * 0.5, wh * 0.5, wh * 0.5);
-      context.fillRect(xy * 0.5, xy * 0.5 + (canvasW * .5), wh * 0.5, wh * 0.5);
-      context.fillRect(xy * 0.5 + (canvasW * .5), xy * 0.5 + (canvasW * .5), wh * 0.5, wh * 0.5);
-  }
-  document.onmousemove = function (e) {
-      if (!e) e = window.event;
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-  };
-  setUp();
-  draw();
-  </script>
+<h1>P_1_0_01 - i</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+position x: resolution<br>
+position y: color<br>
+<br>
+KEYS<br>
+S: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var context,
+    canvasW = 800,
+    canvasH = 800,
+    mouseX = 0,
+    mouseY = 0;
+function setUp() {
+    var canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+}
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+    var h = (mouseY / 2) % 360;
+    context.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+    context.fillRect(0, 0, canvasW, canvasH);
+    var l = mouseY / (canvasW / 100);
+    context.fillStyle = 'hsl(0, 0%, ' + l + '%)';
+    var wh = (mouseX * 2) - canvasW;
+    var xy = (canvasW / 2) - (wh / 2);
+    context.fillRect(xy * 0.5, xy * 0.5, wh * 0.5, wh * 0.5);
+    context.fillRect(xy * 0.5 + (canvasW * .5), xy * 0.5, wh * 0.5, wh * 0.5);
+    context.fillRect(xy * 0.5, xy * 0.5 + (canvasW * .5), wh * 0.5, wh * 0.5);
+    context.fillRect(xy * 0.5 + (canvasW * .5), xy * 0.5 + (canvasW * .5), wh * 0.5, wh * 0.5);
+}
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+setUp();
+draw();
+</script>
 </body>
 </html>

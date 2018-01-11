@@ -1,38 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>P_1_2_1_01</title>
-  <style>
-  html, body, h1 {
-    margin: 0;
-    padding: 0;
-  }
-  h1 {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    font-size: 24px;
-  }
-  </style>
+<meta charset="UTF-8">
+<title>P_1_2_1_01</title>
+<link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 <h1>P_1_2_1_01</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+left click: switch interpolation style<br>
+position x: interpolation resolution<br>
+position y: row count<br>
+<br>
+KEYS<br>
+S: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
 <script>
 var context,
-  canvasW = 800,
-  canvasH = 800,
-  mouseX = 0,
-  mouseY = 0,
-  tileCountX = 100,
-  tileCountY = 1,
-  colorsLeft = [],
-  colorsRight = [],
-  interCol,
-  interpolateShortest = 1;
+    canvasW = 800,
+    canvasH = 800,
+    mouseX = 0,
+    mouseY = 0,
+    tileCountX = 100,
+    tileCountY = 1,
+    colorsLeft = [],
+    colorsRight = [],
+    interCol,
+    interpolateShortest = 1;
 
 function setUp() {
     var canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
     document.body.appendChild(canvas);
     context = canvas.getContext('2d');
     context.canvas.width = canvasW;
