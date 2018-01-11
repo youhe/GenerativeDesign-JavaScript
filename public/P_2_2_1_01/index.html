@@ -45,6 +45,10 @@ function setUp() {
     context.canvas.width = width;
     context.canvas.height = height;
 
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+
     context.fillStyle = '#000';
     context.globalAlpha = .1;
 
