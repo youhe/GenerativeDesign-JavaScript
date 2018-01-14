@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_2_2_2_02</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<h1>P_2_2_2_02</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+click: start a new circe<br>
+position x/y: direction of floating<br>
+<br>
+KEYS<br>
+1-3: draw mode<br>
+f: switch fill styles<br>
+c: clear display<br>
+s: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    formResolution = 15,
+    stepSize = 10,
+    initRadius = 150,
+    centerX,
+    centerY,
+    x = [];
+    y = [],
+    filled = -1,
+    drawMode = 1,
+    drawMode3S = 0;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    clearDisplay();
+
+    centerX = width / 2;
+    centerY = height / 2;
+    var angle = Math.PI / 180 * (360 / formResolution);
+    for (var i = 0; i <= formResolution; i++) {
+        x[i] = Math.cos(angle * i) * initRadius;
+        y[i] = Math.sin(angle * i) * initRadius;
+    }
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    if (mouseX != 0 || mouseY != 0) {
+        centerX += (mouseX - centerX) * .01;
+        centerY += (mouseY - centerY) * .01;
+    }
+
+    for (var i = 0; i < formResolution; i++) {
+        x[i] += (Math.random() * stepSize) - (stepSize / 2);
+        y[i] += (Math.random() * stepSize) - (stepSize / 2);
+    }
+
+    context.beginPath();
+    context.moveTo(
+        x[formResolution] + centerX,
+        y[formResolution] + centerY
+    );
+
+    for (var i = 0; i < formResolution; i+=2) {
+          context.quadraticCurveTo(
+              x[i] + centerX, y[i] + centerY,
+              x[i + 1] + centerX, y[i + 1] + centerY
+          );
+    }
+    context.closePath();
+
+    if (drawMode == 1) {
+        context.fillStyle = '#000';
+        context.strokeStyle = '#000';
+        if (filled == 1) {
+            context.globalAlpha = .01;
+        } else {
+            context.globalAlpha = .1;
+            context.lineWidth = .5;
+        }
+    }
+    if (drawMode == 2) {
+        var c = hsvToRgb(250, Math.random() * 100, 100);
+        context.fillStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
+        context.strokeStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
+        context.globalAlpha = .2;
+        context.lineWidth = .3;
+    }
+    if (drawMode == 3) {
+        drawMode3S = (drawMode3S + 1) % 100;
+        var c = hsvToRgb(50, 100, drawMode3S);
+        context.fillStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
+        context.strokeStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
+        context.globalAlpha = 1;
+        context.lineWidth = .5;
+    }
+
+    if (filled == 1) {
+        context.fill();
+    } else {
+        context.stroke();
+    }
+}
+
+function clearDisplay() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 'f') filled *= -1;
+    if (key == '1') {clearDisplay(); drawMode = 1};
+    if (key == '2') {clearDisplay(); drawMode = 2};
+    if (key == '3') {clearDisplay(); drawMode = 3};
+});
+
+document.onclick = function (e) {
+    var angle = Math.PI / 180 * (360 / formResolution);
+    var radius = initRadius * (Math.random() - .5);
+    for (var i = 0; i <= formResolution; i++){
+        x[i] = Math.cos(angle * i) * radius;
+        y[i] = Math.sin(angle * i) * radius;
+    }
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
