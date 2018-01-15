@@ -65,7 +65,7 @@ function draw() {
         centerY += (mouseY - centerY) * .01;
     }
 
-    for (var i = 0; i < formResolution; i++) {
+    for (var i = 0; i <= formResolution; i++) {
         x[i] += (Math.random() * stepSize) - (stepSize / 2);
         y[i] += (Math.random() * stepSize) - (stepSize / 2);
     }

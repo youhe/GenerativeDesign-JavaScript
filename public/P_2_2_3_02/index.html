@@ -14,8 +14,10 @@ click: start a new circe<br>
 position x/y: direction of floating<br>
 <br>
 KEYS<br>
-1-3: draw mode<br>
-b: switch form styles circle/line<br>
+1-3: fill styles<br>
+4: switch form styles circle<br>
+5: switch form styles line<br>
+arrow up/down: step size +/-<br>
 f: switch fill styles<br>
 c: clear display<br>
 s: save png<br>
@@ -36,8 +38,8 @@ var width = 800,
     x = [];
     y = [],
     filled = -1,
-    drawMode = 1,
-    drawMode3S = 0;
+    shapeMode = 'circle',
+    drawMode = 1;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -47,15 +49,11 @@ function setUp() {
     context.canvas.width = width;
     context.canvas.height = height;
 
-    clearDisplay();
-
     centerX = width / 2;
     centerY = height / 2;
-    var angle = Math.PI / 180 * (360 / formResolution);
-    for (var i = 0; i <= formResolution; i++) {
-        x[i] = Math.cos(angle * i) * initRadius;
-        y[i] = Math.sin(angle * i) * initRadius;
-    }
+    shapeCircle();
+
+    clearDisplay();
 }
 
 function draw() {
@@ -66,24 +64,41 @@ function draw() {
         centerY += (mouseY - centerY) * .01;
     }
 
-    for (var i = 0; i < formResolution; i++) {
+    for (var i = 0; i <= formResolution; i++) {
         x[i] += (Math.random() * stepSize) - (stepSize / 2);
         y[i] += (Math.random() * stepSize) - (stepSize / 2);
     }
 
-    context.beginPath();
-    context.moveTo(
-        x[formResolution] + centerX,
-        y[formResolution] + centerY
-    );
+    if (shapeMode == 'circle') {
+        context.beginPath();
+        context.moveTo(
+            x[formResolution] + centerX,
+            y[formResolution] + centerY
+        );
 
-    for (var i = 0; i < formResolution; i+=2) {
-          context.quadraticCurveTo(
-              x[i] + centerX, y[i] + centerY,
-              x[i + 1] + centerX, y[i + 1] + centerY
-          );
+        for (var i = 0; i < formResolution; i+=2) {
+            context.quadraticCurveTo(
+                x[i] + centerX, y[i] + centerY,
+                x[i + 1] + centerX, y[i + 1] + centerY
+            );
+        }
+        context.closePath();
     }
-    context.closePath();
+    if (shapeMode == 'line') {
+        context.beginPath();
+        for (var i = 0; i < formResolution; i+=2) {
+            if (i == 0) {
+                context.moveTo(
+                    x[i + 1] + centerX, y[i + 1] + centerY
+                );
+            } else {
+                context.quadraticCurveTo(
+                    x[i] + centerX, y[i] + centerY,
+                    x[i + 1] + centerX, y[i + 1] + centerY
+                );
+            }
+        }
+    }
 
     if (drawMode == 1) {
         context.fillStyle = '#000';
@@ -96,18 +111,19 @@ function draw() {
         }
     }
     if (drawMode == 2) {
-        var c = hsvToRgb(250, Math.random() * 100, 100);
+        var s = Math.random() * 100;
+        var c = hsvToRgb(195, s, 100);
+        context.fillStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
+        context.strokeStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
+        context.globalAlpha = .5;
+        context.lineWidth = 10 - (s / 10);
+    }
+    if (drawMode == 3) {
+        var v = map(Math.abs(mouseY - (height / 2)) * 1.5, 0, height / 2, 100, 0);
+        var c = hsvToRgb(10, 90, v);
         context.fillStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
         context.strokeStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
         context.globalAlpha = .2;
-        context.lineWidth = .3;
-    }
-    if (drawMode == 3) {
-        drawMode3S = (drawMode3S + 1) % 100;
-        var c = hsvToRgb(50, 100, drawMode3S);
-        context.fillStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
-        context.strokeStyle = 'rgb('+c.r+','+c.g+','+c.b+')';
-        context.globalAlpha = 1;
         context.lineWidth = .5;
     }
 
@@ -115,6 +131,32 @@ function draw() {
         context.fill();
     } else {
         context.stroke();
+    }
+}
+
+function shapeCircle() {
+    centerX = mouseX;
+    centerY = mouseY;
+    var angle = Math.PI / 180 * (360 / formResolution);
+    var radius = initRadius * (Math.random() - .5);
+    for (var i = 0; i <= formResolution; i++){
+        x[i] = Math.cos(angle * i) * radius;
+        y[i] = Math.sin(angle * i) * radius;
+    }
+}
+
+function shapeLine() {
+    centerX = mouseX;
+    centerY = mouseY;
+    var radius = radius = initRadius * 4;
+    var angle = 0;
+    var x1 = Math.cos(angle) * radius;
+    var y1 = Math.sin(angle) * radius;
+    var x2 = Math.cos(angle - Math.PI) * radius;
+    var y2 = Math.sin(angle - Math.PI) * radius;
+    for (var i = 0; i <= formResolution; i++) {
+      x[i] = lerp(x1, x2, i / formResolution);
+      y[i] = lerp(y1, y2, i / formResolution);
     }
 }
 
@@ -155,6 +197,10 @@ function dist(x1, y1, x2, y2) {
     return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
 }
 
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
 document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
@@ -162,15 +208,13 @@ document.addEventListener('keydown', (event) => {
     if (key == '1') {clearDisplay(); drawMode = 1};
     if (key == '2') {clearDisplay(); drawMode = 2};
     if (key == '3') {clearDisplay(); drawMode = 3};
+    if (key == '4') {shapeCircle(); shapeMode = 'circle';}
+    if (key == '5') {shapeLine(); shapeMode = 'line';}
 });
 
 document.onclick = function (e) {
-    var angle = Math.PI / 180 * (360 / formResolution);
-    var radius = initRadius * (Math.random() - .5);
-    for (var i = 0; i <= formResolution; i++){
-        x[i] = Math.cos(angle * i) * radius;
-        y[i] = Math.sin(angle * i) * radius;
-    }
+    if (shapeMode == 'circle') shapeCircle();
+    if (shapeMode == 'line') shapeLine();
 };
 
 document.onmousemove = function (e) {
