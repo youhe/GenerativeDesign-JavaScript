@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_2_2_4_02</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<h1>P_2_2_4_02</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+KEYS<br>
+1: switch line<br>
+2: switch color<br>
+s: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    lineMode = -1,
+    colorMode = -1,
+    maxCount = 5000,
+    currentCount = 1,
+    newx = [],
+    newy = [],
+    x = [],
+    y = [],
+    r = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    x[0] = width / 2;
+    y[0] = height / 2;
+    r[0] = 360;
+
+    clearDisplay();
+}
+
+function draw() {
+    if (currentCount < maxCount) requestAnimationFrame(function() { draw(); });
+
+    var newR = Math.random() * 10 + 2;
+    var newX = Math.random() * (width - newR) - (0 + newR);
+    var newY = Math.random() * (height - newR) - (0 + newR);
+
+    var closestDist = 100000000;
+    var closestIndex = 0;
+    for (var i = 0; i < currentCount; i++) {
+        var newDist = dist(newX, newY, x[i], y[i]);
+        if (newDist < closestDist) {
+            closestDist = newDist;
+            closestIndex = i;
+        }
+    }
+
+    var angle = Math.atan2(newY - y[closestIndex], newX - x[closestIndex]);
+
+    newx[currentCount] = newX;
+    newy[currentCount] = newY;
+    x[currentCount] = x[closestIndex] + Math.cos(angle) * (r[closestIndex] + newR);
+    y[currentCount] = y[closestIndex] + Math.sin(angle) * (r[closestIndex] + newR);
+    r[currentCount] = newR;
+    currentCount++;
+
+    if (lineMode == 1) {
+        for (var i = 1 ; i < currentCount; i++) {
+            context.fillStyle = '#999';
+            context.strokeStyle = '#999';
+            context.globalAlpha = .3;
+
+            context.beginPath();
+            context.arc(newx[i], newy[i], r[i], 0, Math.PI / 180 * 360, false);
+            context.fill();
+
+            context.beginPath();
+            context.moveTo(newx[i], newy[i]);
+            context.lineTo(x[i], y[i]);
+            context.stroke();
+        }
+    }
+
+    for (var i = 0; i < currentCount; i++) {
+        if (colorMode == 1) {
+            var distMax = dist(width / 2, height / 2, 0, 0);
+            var d = dist(width / 2, height / 2, x[i], y[i]);
+            var v = map(d, 0, distMax, 10, 100);
+            var rgb = hsvToRgb(210, 100, v);
+            var color = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
+            context.strokeStyle = color;
+            context.globalAlpha = 1;
+        } else {
+            context.strokeStyle = '#000';
+            context.globalAlpha = 1;
+        }
+        context.beginPath();
+        context.arc(x[i], y[i], r[i], 0, Math.PI / 180 * 360, false);
+        context.stroke();
+    }
+}
+
+function clearDisplay() {
+    console.log('clearDisplay');
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == '1') lineMode *= -1;
+    if (key == '2') colorMode *= -1;
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
