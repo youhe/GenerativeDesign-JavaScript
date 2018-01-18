@@ -48,8 +48,8 @@ function setUp() {
     context.canvas.width = width;
     context.canvas.height = height;
 
-    x[0] = 200;
-    y[0] = 100;
+    x[0] = width * Math.random();
+    y[0] = height;
     r[0] = 50;
     closestIndex[0] = 0;
 
@@ -61,7 +61,6 @@ function draw() {
 
     clearDisplay();
 
-    // create a random position
     var newX = Math.random() * (width - (maxRadius * 2)) + (maxRadius);
     var newY = Math.random() * (height - (maxRadius * 2)) + (maxRadius);
     var newR = minRadius;
@@ -111,13 +110,19 @@ function draw() {
             context.strokeStyle = 'rgb(0, 0, 0)';
             context.fillStyle = 'rgb(0, 0, 0)';
         }
+
+        var radius = r[i];
         if (lineMode == 1) {
             context.lineWidth = r[i] / 6;
+            radius = r[i] - (r[i] / 6 / 2);
         } else {
             context.lineWidth = 1;
         }
         context.beginPath();
-        context.arc(x[i], y[i], r[i], 0, Math.PI / 180 * 360, false);
+        context.arc(
+            x[i], y[i], radius,
+            0, Math.PI / 180 * 360, false
+        );
         if (fillMode == 1) {
             context.fill();
         } else {
@@ -126,11 +131,12 @@ function draw() {
 
 
         if (colorMode == 1) {
-            context.strokeStyle = 'rgb(150, 150, 150)';
+            context.strokeStyle = 'rgb(180, 180, 180)';
+            context.lineWidth = .5;
         } else {
             context.strokeStyle = 'rgb(255, 200, 0)';
+            context.lineWidth = 1;
         }
-        context.lineWidth = .5;
         var n = closestIndex[i];
         context.beginPath();
         context.moveTo(x[i], y[i]);
@@ -206,7 +212,7 @@ document.addEventListener('keydown', (event) => {
     if (key == '2') colorMode *= -1;
     if (key == '3') fillMode *= -1;
     if (key == 'ArrowUp') mouseRect = mouseRect + 1;
-    if (key == 'ArrowDown') mouseRect = Math.max(mouseRect - 1, 100);
+    if (key == 'ArrowDown') mouseRect = Math.max(mouseRect - 1, 30);
 });
 
 document.onclick = function (e) {
