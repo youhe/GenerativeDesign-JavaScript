@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_2_2_5_02</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<h1>P_2_2_5_02</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+press + position x/y: move area of interest<br>
+KEYS<br>
+arrow up/down: resize area of interest<br>
+1: show/hide modules<br>
+2: show/hide lines<br>
+3: show/hide circles<br>
+s: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    maxCount = 5000,
+    currentCount = 1,
+    x = [],
+    y = [],
+    h = [],
+    r = [],
+    closestIndex = [],
+    minRadius = 3,
+    maxRadius = 30,
+    mouseRect = 50;
+    showSvg = 1,
+    showLine = -1,
+    showCircle = 1,
+    mousePressed = false;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    x[0] = width / 2;
+    y[0] = height / 2;
+    h[0] = Math.floor(Math.random() * 360);
+    r[0] = 40;
+    closestIndex[0] = 0;
+
+    clearDisplay();
+}
+
+function draw() {
+    if (currentCount < maxCount) requestAnimationFrame(function() { draw(); });
+
+    clearDisplay();
+
+    for (var j = 0; j < 40; j++) {
+        var tx = Math.random() * (width - (maxRadius * 2)) + (maxRadius);
+        var ty = Math.random() * (height - (maxRadius * 2)) + (maxRadius);
+        var th = Math.floor(Math.random() * 360);
+        var tr = minRadius;
+
+
+        if (mousePressed == true) {
+            tx = mouseX + Math.random() * mouseRect - (mouseRect / 2);
+            ty = mouseY + Math.random() * mouseRect - (mouseRect / 2);
+            tr = 1;
+        } 
+
+        var insection = true;
+        for(var i = 0; i < currentCount; i++) {
+            var d = dist(tx, ty, x[i], y[i]);
+            if (d >= (tr + r[i])) insection = false;
+            else {
+                insection = true;
+                break;
+            }
+        }
+
+        if (insection == false) {
+            var tRadius = width;
+            for (var i = 0; i < currentCount; i++) {
+                var d = dist(tx, ty, x[i], y[i]);
+                if (tRadius > d - r[i]) {
+                      tRadius = d-r[i];
+                      closestIndex[currentCount] = i;
+                      var v = (Math.random() < .5) ? -20 : 20;
+                      th = Math.max((h[closestIndex[currentCount]] + v) % 360, 0);
+                }
+            }
+
+            if (tRadius > maxRadius) tRadius = maxRadius;
+
+            x[currentCount] = tx;
+            y[currentCount] = ty;
+            h[currentCount] = th;
+            r[currentCount] = tRadius;
+            currentCount++;
+        }
+    }
+
+    for (var i = 0 ; i < currentCount; i++) {
+        context.save();
+        context.translate(x[i], y[i]);
+        context.rotate(r[i] * Math.Pi / 180);
+
+        if (showSvg == 1) {
+            var color = hsvToRgb(h[i], 30, 100);
+            var rgb = 'rgb('+color.r+','+color.g+','+color.b+')';
+            context.fillStyle = rgb;
+            context.lineWidth = 1.5;
+            context.beginPath();
+            context.arc(0, 0, r[i], 0, Math.PI / 180 * 360, false);
+            context.fill();
+        }
+        if (showCircle == 1) {
+            context.strokeStyle = '#aaa';
+            context.lineWidth = 1;
+            context.beginPath();
+            context.arc(0, 0, r[i], 0, Math.PI / 180 * 360, false);
+            context.stroke();
+        }
+        context.restore();
+
+        if (showLine == 1) {
+            context.strokeStyle = '#000';
+            context.lineWidth = 1;
+            var n = closestIndex[i];
+            context.beginPath();
+            context.moveTo(x[i], y[i]);
+            context.lineTo(x[n], y[n]);
+            context.stroke();
+        }
+    }
+
+    if (mousePressed == true) {
+        context.strokeStyle = '#333';
+        context.lineWidth = 1;
+        context.beginPath();
+        context.rect(
+            mouseX-mouseRect/2, mouseY-mouseRect/2,
+            mouseRect, mouseRect
+        );
+        context.stroke();
+    } 
+}
+
+function clearDisplay() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+document.addEventListener('mousedown', (event) => {
+    mousePressed = true;
+});
+
+document.addEventListener('mouseup', (event) => {
+    mousePressed = false;
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == '1') showSvg *= -1;
+    if (key == '2') showLine *= -1;
+    if (key == '3') showCircle *= -1;
+    if (key == 'ArrowUp') mouseRect = mouseRect + 1;
+    if (key == 'ArrowDown') mouseRect = Math.max(mouseRect - 1, 30);
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
