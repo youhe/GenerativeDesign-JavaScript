@@ -38,7 +38,7 @@ var width = 800,
     mouseRect = 50;
     showSvg = 1,
     showLine = -1,
-    showCircle = 1,
+    showCircle = -1,
     mousePressed = false;
 
 function setUp() {
@@ -63,7 +63,7 @@ function draw() {
 
     clearDisplay();
 
-    for (var j = 0; j < 40; j++) {
+    for (var j = 0; j < 10; j++) {
         var tx = Math.random() * (width - (maxRadius * 2)) + (maxRadius);
         var ty = Math.random() * (height - (maxRadius * 2)) + (maxRadius);
         var th = Math.floor(Math.random() * 360);
@@ -93,7 +93,7 @@ function draw() {
                 if (tRadius > d - r[i]) {
                       tRadius = d-r[i];
                       closestIndex[currentCount] = i;
-                      var v = (Math.random() < .5) ? -20 : 20;
+                      var v = (Math.random() < .5) ? -30 : 30;
                       th = Math.max((h[closestIndex[currentCount]] + v) % 360, 0);
                 }
             }
@@ -132,7 +132,7 @@ function draw() {
         context.restore();
 
         if (showLine == 1) {
-            context.strokeStyle = '#000';
+            context.strokeStyle = '#aaa';
             context.lineWidth = 1;
             var n = closestIndex[i];
             context.beginPath();
