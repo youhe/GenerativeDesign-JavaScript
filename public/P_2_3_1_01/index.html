@@ -55,6 +55,7 @@ function draw() {
 
     if (mousePressed) {
         context.strokeStyle = col;
+        context.globalAlpha = 1;
         context.lineWidth = 1;
         context.save();
         context.translate(mouseX, mouseY);
@@ -72,8 +73,8 @@ function draw() {
 }
 
 function setColorBlue() {
-    var h = Math.random() * 50 + 180;
-    var s = Math.random() * 50 + 50;
+    var h = map(mouseY, 0, 800, 0, 50) + 180;
+    var s = 80;
     var v = 100;
     var rgb = hsvToRgb(h, s, v);
     var color = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
