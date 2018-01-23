@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_2_3_1_01</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<h1>P_2_3_1_01</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+drag: draw<br>
+<br>
+KEYS<br>
+1-4: switch default colors<br>
+5-8: switch brush element<br>
+d: reverse direction and mirrow angle<br>
+arrow left: rotaion speed -<br>
+arrow right: rotaion speed +<br>
+arrow up: line length +<br>
+arrow down: line length -<br>
+
+
+arrow up/down: resize area of interest<br>
+s: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    col = 'rgb(221, 227, 0)',
+    lineLength = 0,
+    angle = 0,
+    angleSpeed = 1,
+    mousePressed = false,
+    drawMode = 1;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    clearDisplay();
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    if (mousePressed) {
+        context.strokeStyle = col;
+        context.globalAlpha = .6;
+        context.lineWidth = 2;
+        context.save();
+        context.translate(mouseX, mouseY);
+        context.rotate(angle * Math.PI / 180);
+
+        if (drawMode == 1) {
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.lineTo(lineLength, 0);
+            context.closePath();
+            context.stroke();
+            context.restore();
+        }
+        if (drawMode == 2) {
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.lineTo(lineLength / 6 * 1, lineLength / 2);
+            context.lineTo(lineLength / 6 * 2, 0);
+            context.lineTo(lineLength / 6 * 3, lineLength / 2);
+            context.lineTo(lineLength / 6 * 4, 0);
+            context.lineTo(lineLength / 6 * 5, lineLength / 2);
+            context.lineTo(lineLength / 6 * 6, 0);
+            context.stroke();
+            context.restore();
+        }
+        if (drawMode == 3) {
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.quadraticCurveTo(
+                lineLength / 8 * 1, lineLength / 4,
+                lineLength / 8 * 2, 0
+            );
+            context.quadraticCurveTo(
+                lineLength / 8 * 3, lineLength / 4 * -1,
+                lineLength / 8 * 4, 0
+            );
+            context.quadraticCurveTo(
+                lineLength / 8 * 5, lineLength / 4,
+                lineLength / 8 * 6, 0
+            );
+            context.quadraticCurveTo(
+                lineLength / 8 * 7, lineLength / 4 * -1,
+                lineLength / 8 * 8, 0
+            );
+            context.stroke();
+            context.restore();
+        }
+        if (drawMode == 4) {
+            context.beginPath();
+            context.moveTo(lineLength / 8 * 1, lineLength / 2);
+            context.lineTo(lineLength / 8 * 2, 0);
+            context.stroke();
+
+            context.beginPath();
+            context.moveTo(lineLength / 8 * 3, lineLength / 2);
+            context.lineTo(lineLength / 8 * 4, 0);
+            context.stroke();
+
+            context.beginPath();
+            context.moveTo(lineLength / 8 * 5, lineLength / 2);
+            context.lineTo(lineLength / 8 * 6, 0);
+            context.stroke();
+
+            context.beginPath();
+            context.moveTo(lineLength / 8 * 7, lineLength / 2);
+            context.lineTo(lineLength / 8 * 8, 0);
+            context.stroke();
+
+            context.restore();
+        }
+        angle += angleSpeed;
+    }
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function clearDisplay() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+document.addEventListener('mousedown', (event) => {
+    mousePressed = true;
+    lineLength = Math.random() * 300 + 50;
+});
+
+document.addEventListener('mouseup', (event) => {
+    mousePressed = false;
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == '1') col = 'rgb(231, 237, 0)';
+    if (key == '2') col = 'rgb(0, 190, 224)';
+    if (key == '3') col = 'rgb(87, 35, 129)';
+    if (key == '4') col = 'rgb(197, 0, 123)';
+    if (key == '5') drawMode = 1;
+    if (key == '6') drawMode = 2;
+    if (key == '7') drawMode = 3;
+    if (key == '8') drawMode = 4;
+    if (key == 'd') angleSpeed *= -1;
+    if (key == 'ArrowUp') lineLength += 5;
+    if (key == 'ArrowDown') lineLength -= 5;
+    if (key == 'ArrowRight') angleSpeed -= .5;
+    if (key == 'ArrowLeft') angleSpeed += .5;
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
