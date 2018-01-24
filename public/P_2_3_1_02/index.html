@@ -6,25 +6,26 @@
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-<h1>P_2_3_1_02</h1>
-<p class="operation">
-<b>OPERATION</b><br>
-MOUSE<br>
-drag: draw<br>
-<br>
-KEYS<br>
-1-4: switch default colors<br>
-5-8: switch brush element<br>
-d: reverse direction and mirrow angle<br>
-arrow left: rotaion speed -<br>
-arrow right: rotaion speed +<br>
-arrow up: line length +<br>
-arrow down: line length -<br>
-
-
-arrow up/down: resize area of interest<br>
-s: save png<br>
-</p>
+<div id="textBox">
+    <h1>P_2_3_1_02</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+    MOUSE<br>
+    drag: draw<br>
+    <br>
+    KEYS<br>
+    1-4: switch default colors<br>
+    5-8: switch brush element<br>
+    d: reverse direction and mirrow angle<br>
+    arrow left: rotaion speed -<br>
+    arrow right: rotaion speed +<br>
+    arrow up: line length +<br>
+    arrow down: line length -<br>
+    c: clear display<br>
+    t: switch text display<br>
+    s: save png<br>
+    </p>
+</div>
 <script src="../assets/js/downloadCanvas.js"></script>
 <script>
 var width = 800,
@@ -56,8 +57,8 @@ function draw() {
 
     if (mousePressed) {
         context.strokeStyle = col;
-        context.globalAlpha = .6;
-        context.lineWidth = 2;
+        context.globalAlpha = .5;
+        context.lineWidth = 1;
         context.save();
         context.translate(mouseX, mouseY);
         context.rotate(angle * Math.PI / 180);
@@ -160,6 +161,13 @@ function clearDisplay() {
     context.fillRect(0, 0, width, height);
 }
 
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
 function map(val, s1, e1, s2, e2) {
     return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
 }
@@ -184,6 +192,7 @@ document.addEventListener('mouseup', (event) => {
 document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
     if (key == '1') col = 'rgb(231, 237, 0)';
     if (key == '2') col = 'rgb(0, 190, 224)';
     if (key == '3') col = 'rgb(87, 35, 129)';
