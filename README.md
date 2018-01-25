@@ -1,1 +1,1 @@
-# GenerativeDesign - javascript
+# GenerativeDesign - JavaScript
