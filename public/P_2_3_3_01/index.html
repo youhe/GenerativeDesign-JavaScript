@@ -36,7 +36,8 @@ var width = 800,
     letters = "abcdefg hijklmn opqrstu vwxyz ",
     fontSizeMin = 3,
     angleDistortion = 0.0,
-    counter = 0;
+    counter = 0,
+    colH = 0;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -56,9 +57,14 @@ function draw() {
     requestAnimationFrame(function() { draw(); });
 
     if (mousePressed) {
+        colH = (colH + .8) % 100;
+        var rgb = hsvToRgb(30, 80, colH);
+        var rgbColor = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
+
         var d = dist(x, y, mouseX, mouseY);
         var fontSize = Math.floor(fontSizeMin + d / 2);
-        var font = fontSize + "px 'American Typewriter'";
+        // var font = fontSize + "px 'American Typewriter'";
+        var font = fontSize + "px 'Monotype Corsiva'";
         context.font = font;
 
         var newLetter = letters.charAt(counter);
@@ -71,6 +77,7 @@ function draw() {
             context.translate(x, y);
             context.rotate(angle + (Math.random() * Math.PI / 180 * angleDistortion));
             context.fillStyle = '#000';
+            context.fillStyle = rgbColor;
             context.fillText(newLetter, 0, 0);
             context.restore();
 
