@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_2_3_6_01</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+    <h1>P_2_3_6_01</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+MOUSE<br>
+drag: draw<br>
+<br>
+KEYS<br>
+1-7: switch module<br>
+q,w,e,r: switch color<br>
+c: clear display<br>
+t: switch text display<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    mousePressed = false,
+    modules,
+    tileSize = 40,
+    gridResolutionX,
+    gridResolutionY,
+    tiles = [],
+    drawGrid = true,
+    debugMode = false;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    gridResolutionX = Math.round(width / tileSize) + 2;
+    gridResolutionY = Math.round(height / tileSize) + 2;
+    for (var i = 0; i < gridResolutionY; i++) {
+        tiles[i] = [];
+    }
+
+    // modules = new PShape[16]; 
+    // for (int i=0; i< modules.length; i++) { 
+    //     modules[i] = loadShape(nf(i,2)+".svg");
+    // }
+
+    clearDisplay();
+    initTiles();
+    drawGridF();
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    if (mousePressed) {
+        clearDisplay();
+        // if (mousePressed) setTile();
+        // if (mousePressed) unsetTile();
+
+        if (drawGrid) drawGridF();
+        // drawModules();
+    }
+}
+
+function initTiles() {
+    for (var gridY = 0; gridY < gridResolutionY; gridY++) {
+        for (var gridX = 0; gridX < gridResolutionX; gridX++) {  
+            tiles[gridX][gridY] = '0';
+        }
+    }
+}
+
+function setTile() {
+    var gridX = Math.floor(mouseX / tileSize) + 1;
+    gridX = Math.min(Math.max(gridX, 1), gridResolutionX - 2);
+    var gridY = Math.floor(mouseY / tileSize) + 1;
+    gridY = Math.min(Math.max(gridY, 1), gridResolutionY - 2);
+    tiles[gridX][gridY] = '1';
+}
+
+function unsetTile() {
+    var gridX = math.floor(mouseX / tileSize) + 1;
+    gridX = Math.min(Math.max(gridX, 1), gridResolutionX - 2);
+    var gridY = math.floor(mouseY / tileSize) + 1;
+    gridY = Math.min(Math.max(gridY, 1), gridResolutionY - 2);
+    tiles[gridX][gridY] = '0';
+}
+
+function drawGridF() {
+    context.save();
+    context.translate(tileSize / 2, tileSize / 2);
+    for (var gridY = 0; gridY < gridResolutionY; gridY++) {
+        for (var gridX = 0; gridX < gridResolutionX; gridX++) {  
+            var posX = tileSize * gridX - tileSize / 2;
+            var posY = tileSize * gridY - tileSize / 2;
+            context.strokeStyle = '#ccc';
+            context.lineWidth = .1;
+            // if (debugMode) {
+            //     if (tiles[gridX][gridY] == '1') fill(220);
+            // }
+            context.rect(posX, posY, tileSize, tileSize);
+            context.stroke();
+        }
+    }
+    context.restore();
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+function clearDisplay() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
+document.addEventListener('mousedown', (event) => {
+    mousePressed = true;
+});
+
+document.addEventListener('mouseup', (event) => {
+    mousePressed = false;
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
