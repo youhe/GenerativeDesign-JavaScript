@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>P_2_3_3_01</title>
+<title>P_3_0_01</title>
 <link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 <div id="textBox">
-    <h1>P_2_3_3_01</h1>
+    <h1>P_3_0_01</h1>
     <p class="operation">
     <b>OPERATION</b><br>
 MOUSE<br>
+position x: size<br>
+position y: position<br>
 drag: draw<br>
 <br>
 KEYS<br>
-arrow up: angle distortion +<br>
-arrow down: angle distortion -<br>
+all: change letter<br>
 c: clear display<br>
 t: switch text display<br>
 s: save png</p>
@@ -30,14 +31,7 @@ var width = 800,
     mouseX = 0,
     mouseY = 0,
     mousePressed = false,
-    x = 0,
-    y = 0,
-    stepSize = 5.0,
-    letters = "abcdefg hijklmn opqrstu vwxyz ",
-    fontSizeMin = 3,
-    angleDistortion = 0.0,
-    counter = 0,
-    colH = 0;
+    letter = 'A';
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -47,47 +41,23 @@ function setUp() {
     context.canvas.width = width;
     context.canvas.height = height;
 
-    x = mouseX;
-    y = mouseY;
-
     clearDisplay();
 }
 
 function draw() {
     requestAnimationFrame(function() { draw(); });
 
-    if (mousePressed) {
-        colH = (colH + .8) % 100;
-        var rgb = hsvToRgb(30, 80, colH);
-        var rgbColor = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
-
-        var d = dist(x, y, mouseX, mouseY);
-        var fontSize = Math.floor(fontSizeMin + d / 2);
-        // var font = fontSize + "px 'American Typewriter'";
-        var font = fontSize + "px 'Monotype Corsiva'";
-        context.font = font;
-
-        var newLetter = letters.charAt(counter);
-        stepSize = context.measureText(newLetter).width;
-
-        if (d > stepSize) {
-            var angle = Math.atan2(mouseY - y, mouseX - x);
-
-            context.save();
-            context.translate(x, y);
-            context.rotate(angle + (Math.random() * Math.PI / 180 * angleDistortion));
-            context.fillStyle = '#000';
-            context.fillStyle = rgbColor;
-            context.fillText(newLetter, 0, 0);
-            context.restore();
-
-            counter++;
-            if (counter > letters.length - 1) counter = 0;
-
-            x = x + Math.cos(angle) * stepSize;
-            y = y + Math.sin(angle) * stepSize;
-        }
-    }
+    if (!mousePressed) clearDisplay();
+    // var textSize = Math.abs((mouseX - (width / 2)) * 2 + 1);
+    var textSize = ((mouseX - (width / 2)) * 2 + 1);
+    var font = textSize + "px 'American Typewriter'";
+    var font = textSize + "px 'MS ゴシック'";
+    var fontWidth = context.measureText(letter).width / 2;
+    context.font = font;
+    context.fillStyle = '#000';
+    context.globalAlpha = .2;
+    // context.fillText(letter, width / 2 - fontWidth, mouseY);
+    context.strokeText(letter, width / 2 - fontWidth, mouseY);
 }
 
 function hsvToRgb(h, s, v) {
@@ -140,8 +110,6 @@ function toggleText() {
 
 document.addEventListener('mousedown', (event) => {
     mousePressed = true;
-    x = mouseX;
-    y = mouseY;
 });
 
 document.addEventListener('mouseup', (event) => {
@@ -152,8 +120,8 @@ document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
-    if (key == 'ArrowUp') angleDistortion += .1;
-    if (key == 'ArrowDown') angleDistortion -= .1;
+
+    letter = key;
 });
 
 document.onclick = function (e) {
