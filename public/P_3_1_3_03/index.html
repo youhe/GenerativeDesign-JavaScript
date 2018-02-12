@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_3_0_3_03</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+    <h1>P_3_0_3_03</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+MOUSE<br>
+position x: random angle<br>
+position y: line length, size of ellipses, tracking<br>
+<br>
+KEYS<br>
+1: toggle alpha mode<br>
+2: toggle drawing of lines<br>
+3: toggle drawing of ellipses<br>
+4: toggle drawing of text<br>
+t: switch text display<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 800,
+    mouseY = 800,
+    joinedText = '',
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜß,.;:!? ',
+    counters = [],
+    posX,
+    posY,
+    randomVal = [],
+    tracking = 29,
+    actRandomSeed = 0,
+    drawAlpha = true,
+    drawLines = true,
+    drawEllipses = true,
+    drawText = true;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    joinedText += 'Ihr naht euch wieder, schwankende Gestalten,';
+    joinedText += 'Die früh sich einst dem trüben Blick gezeigt.';
+    joinedText += 'Versuch ich wohl, euch diesmal festzuhalten?';
+    joinedText += 'Fühl ich mein Herz noch jenem Wahn geneigt?';
+    joinedText += 'Ihr drängt euch zu! nun gut, so mögt ihr walten,';
+    joinedText += 'Wie ihr aus Dunst und Nebel um mich steigt;';
+    joinedText += 'Mein Busen fühlt sich jugendlich erschüttert';
+    joinedText += 'Vom Zauberhauch, der euren Zug umwittert.';
+    joinedText += 'Ihr bringt mit euch die Bilder froher Tage,';
+    joinedText += 'Und manche liebe Schatten steigen auf;';
+    joinedText += 'Gleich einer alten, halbverklungnen Sage';
+    joinedText += 'Kommt erste Lieb und Freundschaft mit herauf;';
+    joinedText += 'Der Schmerz wird neu, es wiederholt die Klage';
+    joinedText += 'Des Lebens labyrinthisch irren Lauf,';
+    joinedText += 'Und nennt die Guten, die, um schöne Stunden';
+    joinedText += 'Vom Glück getäuscht, vor mir hinweggeschwunden.';
+
+    for (var i = 0; i < 200; i++) {
+        counters[i] = 0;
+    }
+    countCharacters();
+}
+
+function countCharacters() {
+  for (var i = 0; i < joinedText.length; i++) {
+    randomVal[i] = (Math.random() - .5) * Math.PI * 360 / 180;
+    var s = joinedText.charAt(i).toUpperCase();
+    var uppercaseChar = s.charAt(0);
+    var index = alphabet.indexOf(uppercaseChar);
+    if (index >= 0) counters[index]++;
+  }
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    clearDisplay();
+
+    posX = 80;
+    posY = 50;
+
+    // ------ draw lines and ellipses ------
+    for (var i = 0; i < joinedText.length; i++) {
+        var s = joinedText.charAt(i).toUpperCase();
+        var uppercaseChar = s.charAt(0);
+        var index = alphabet.indexOf(uppercaseChar);
+        if (index < 0) continue;
+
+        // ------ calculate parameters ------
+        var charAlpha = 1;
+        if (drawAlpha) charAlpha = counters[index] / 100;
+
+        var my = map(mouseY, 50, height - 50, 0, 1);
+        my = constrain(my, 0, 1);
+        var charSize = counters[index] * my * 3;
+
+        var mx = map(mouseX, 50, width - 50, 0, 1);
+        mx = constrain(mx, 0, 1);
+        var lineLength = charSize;
+        var lineAngle = randomVal[i] * mx - Math.PI / 2;
+        var newPosX = lineLength * Math.cos(lineAngle);
+        var newPosY = lineLength * Math.sin(lineAngle);
+
+        // ------ draw elements ------
+        context.save();
+        context.translate(posX, posY);
+        context.fillStyle = '#00196D';
+        context.globalAlpha = .1;
+        if (drawEllipses) {
+            context.beginPath();
+            context.arc(0, 0, charSize / 10, 0, Math.PI / 180 * 360, false);
+            context.fill();
+        }
+        context.strokeStyle = '#72CEAE';
+        context.globalAlpha = charAlpha;
+        context.lineWidth = 2;
+        if (drawLines) {
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.lineTo(newPosX, newPosY);
+            context.stroke();
+        }
+        context.restore();
+
+        var textWidth = context.measureText(joinedText.charAt(i)).width * 2.5;
+        posX += textWidth;
+        if (posX >= width - 200 && uppercaseChar == ' ') {
+            posY += tracking * my + 30;
+            posX = 80;
+        }
+    }
+
+    // ------ draw letters ------
+    if (drawText) {
+        posX = 80;
+        posY = 50;
+
+        for (var i = 0; i < joinedText.length; i++) {
+            var s = joinedText.charAt(i).toUpperCase();
+            var uppercaseChar = s.charAt(0);
+            var index = alphabet.indexOf(uppercaseChar);
+            if (index < 0) continue;
+
+            var charAlpha = 100;
+            if (drawAlpha) charAlpha = counters[index] / 50;
+
+            var my = map(mouseY, 50, height - 50, 0, 1);
+            my = constrain(my, 0, 1);
+            var charSize = counters[index] * my * 3;
+
+            var mx = map(mouseX, 50, width - 50, 0, 1);
+            mx = constrain(mx, 0, 1);
+            var lineLength = charSize;
+            var lineAngle = randomVal[i] * mx - Math.PI / 2;
+            var newPosX = lineLength * Math.cos(lineAngle);
+            var newPosY = lineLength * Math.sin(lineAngle);
+
+            context.save();
+            context.translate(posX, posY);
+            context.fillStyle = '#333';
+            context.globalAlpha = charAlpha;
+            // var font = (charSize / 10) + "px 'MS ゴシック'";
+            var font = "24px 'MS ゴシック'";
+            context.font = font;
+            context.fillText(joinedText.charAt(i), newPosX, newPosY);
+            context.restore();
+
+            var textWidth = context.measureText(joinedText.charAt(i)).width * 2.5;
+            posX += textWidth;
+            if (posX >= width - 200 && uppercaseChar == ' ') {
+                posY += tracking * my + 30;
+                posX = 80;
+            }
+        }
+    }
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+function constrain(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+}
+
+function clearDisplay() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
+document.addEventListener('mousedown', (event) => {
+    mousePressed = true;
+});
+
+document.addEventListener('mouseup', (event) => {
+    mousePressed = false;
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
+
+    if (key == 'Shift') {
+    } else if (key == 'Backspace') {
+        if (0 < textTyped.length) {
+            textTyped = textTyped.slice(0, -1);
+            fontSizes.pop();
+            pMillis = millis;
+        }
+    } else {
+        textTyped += key;
+        fontSizes.push(newFontSize);
+        pMillis = millis;
+    }
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
