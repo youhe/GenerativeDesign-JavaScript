@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_2_1_2_03 - i</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<h1>P_2_1_2_03 - i</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+position x/y: module size and offset z<br>
+<br>
+KEYS<br>
+s: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 900,
+    height = 900,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    tileCount = 100,
+    max_distance = 500,
+    titleActives = [
+        0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 0, 1, 1, 1, 0,
+        0, 0, 0, 1, 0, 0, 0, 1, 0,
+        0, 0, 0, 1, 0, 0, 0, 1, 0,
+        0, 1, 1, 1, 0, 1, 1, 1, 0,
+        0, 1, 0, 0, 0, 1, 0, 0, 0,
+        0, 1, 0, 0, 0, 1, 0, 0, 0,
+        0, 1, 1, 1, 0, 1, 1, 1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
+
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+}
+
+function draw() {
+    requestAnimationFrame(function () { draw(); });
+    // mouseX = width / 2 - 50;
+    // mouseY = width / 2 - 50;
+
+    context.fillStyle = '#fff';
+    context.fillStyle = '#000';
+    context.fillRect(0, 0, width, height);
+
+    for (var gridY = 0; gridY < width; gridY += tileCount) {
+        for (var gridX = 0; gridX < height; gridX += tileCount) {
+            var index = (gridY / tileCount) * (height / tileCount) + (gridX / tileCount);
+            var active = titleActives[index];
+            var diameter = dist(mouseX, mouseY, gridX, gridY) * 3.;
+            diameter = diameter / max_distance * tileCount;
+
+            context.save();
+            context.translate(gridX, gridY);
+
+            if (active == 1) {
+                context.strokeStyle = '#D50000';
+                var grad  = context.createRadialGradient(
+                    (tileCount / 2), (tileCount / 2), 0,
+                    (tileCount / 2), (tileCount / 2), diameter / 3,
+                );
+                grad.addColorStop(0,'#D50000');
+                grad.addColorStop(.1,'#D50000');
+                grad.addColorStop(1,'rgba(0, 0, 0, 0)');
+                context.fillStyle = grad;
+                context.globalAlpha = .9;
+            } else {
+                context.strokeStyle = '#3C2885';
+                context.strokeStyle = '#000';
+                context.strokeStyle = '#eee';
+                context.globalAlpha = .2;
+                context.lineWidth = diameter / 60;
+            }
+
+            context.beginPath();
+            if (active == 1) {
+                context.fillRect(
+                    diameter / -2 + (tileCount / 2), diameter / -2 + (tileCount / 2),
+                    diameter, diameter
+                );
+            } else {
+                context.rect(
+                    diameter / -2 + (tileCount / 2), diameter / -2 + (tileCount / 2),
+                    diameter, diameter
+                );
+                context.stroke();
+            }
+            context.restore();
+        }
+    }
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
