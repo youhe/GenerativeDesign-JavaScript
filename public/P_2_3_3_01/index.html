@@ -71,7 +71,7 @@ function draw() {
         stepSize = context.measureText(newLetter).width;
 
         if (d > stepSize) {
-            var angle = Math.atan2(mouseY - y, mouseX - x); 
+            var angle = Math.atan2(mouseY - y, mouseX - x);
 
             context.save();
             context.translate(x, y);
@@ -85,7 +85,7 @@ function draw() {
             if (counter > letters.length - 1) counter = 0;
 
             x = x + Math.cos(angle) * stepSize;
-            y = y + Math.sin(angle) * stepSize; 
+            y = y + Math.sin(angle) * stepSize;
         }
     }
 }
