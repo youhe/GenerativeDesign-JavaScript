@@ -39,10 +39,10 @@ var width = 800,
     randomVal = [],
     tracking = 29,
     actRandomSeed = 0,
-    drawAlpha = true,
-    drawLines = true,
-    drawEllipses = true,
-    drawText = true;
+    drawAlpha = 1,
+    drawLines = 1,
+    drawEllipses = 1,
+    drawText = 1;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -76,13 +76,13 @@ function setUp() {
 }
 
 function countCharacters() {
-  for (var i = 0; i < joinedText.length; i++) {
-    randomVal[i] = (Math.random() - .5) * Math.PI * 360 / 180;
-    var s = joinedText.charAt(i).toUpperCase();
-    var uppercaseChar = s.charAt(0);
-    var index = alphabet.indexOf(uppercaseChar);
-    if (index >= 0) counters[index]++;
-  }
+    for (var i = 0; i < joinedText.length; i++) {
+        randomVal[i] = (Math.random() - .5) * Math.PI * 360 / 180;
+        var s = joinedText.charAt(i).toUpperCase();
+        var uppercaseChar = s.charAt(0);
+        var index = alphabet.indexOf(uppercaseChar);
+        if (index >= 0) counters[index]++;
+    }
 }
 
 function draw() {
@@ -102,7 +102,7 @@ function draw() {
 
         // ------ calculate parameters ------
         var charAlpha = 1;
-        if (drawAlpha) charAlpha = counters[index] / 100;
+        if (drawAlpha == 1) charAlpha = counters[index] / 100;
 
         var my = map(mouseY, 50, height - 50, 0, 1);
         my = constrain(my, 0, 1);
@@ -120,7 +120,7 @@ function draw() {
         context.translate(posX, posY);
         context.fillStyle = '#00196D';
         context.globalAlpha = .1;
-        if (drawEllipses) {
+        if (drawEllipses == 1) {
             context.beginPath();
             context.arc(0, 0, charSize / 10, 0, Math.PI / 180 * 360, false);
             context.fill();
@@ -128,7 +128,7 @@ function draw() {
         context.strokeStyle = '#72CEAE';
         context.globalAlpha = charAlpha;
         context.lineWidth = 2;
-        if (drawLines) {
+        if (drawLines == 1) {
             context.beginPath();
             context.moveTo(0, 0);
             context.lineTo(newPosX, newPosY);
@@ -145,7 +145,7 @@ function draw() {
     }
 
     // ------ draw letters ------
-    if (drawText) {
+    if (drawText == 1) {
         posX = 80;
         posY = 50;
 
@@ -156,7 +156,7 @@ function draw() {
             if (index < 0) continue;
 
             var charAlpha = 100;
-            if (drawAlpha) charAlpha = counters[index] / 50;
+            if (drawAlpha == 1) charAlpha = counters[index] / 50;
 
             var my = map(mouseY, 50, height - 50, 0, 1);
             my = constrain(my, 0, 1);
@@ -173,7 +173,6 @@ function draw() {
             context.translate(posX, posY);
             context.fillStyle = '#333';
             context.globalAlpha = charAlpha;
-            // var font = (charSize / 10) + "px 'MS ゴシック'";
             var font = "24px 'MS ゴシック'";
             context.font = font;
             context.fillText(joinedText.charAt(i), newPosX, newPosY);
@@ -254,18 +253,10 @@ document.addEventListener('keydown', (event) => {
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
 
-    if (key == 'Shift') {
-    } else if (key == 'Backspace') {
-        if (0 < textTyped.length) {
-            textTyped = textTyped.slice(0, -1);
-            fontSizes.pop();
-            pMillis = millis;
-        }
-    } else {
-        textTyped += key;
-        fontSizes.push(newFontSize);
-        pMillis = millis;
-    }
+    if (key == '1') drawAlpha *= -1;
+    if (key == '2') drawLines *= -1;
+    if (key == '3') drawEllipses *= -1;
+    if (key == '4') drawText *= -1;
 });
 
 document.onclick = function (e) {
