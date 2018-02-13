@@ -2,22 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>P_3_1_1_01</title>
+<title>P_3_1_3_02</title>
 <link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 <div id="textBox">
-    <h1>P_3_1_1_01</h1>
+    <h1>P_3_1_3_02</h1>
     <p class="operation">
     <b>OPERATION</b><br>
 MOUSE<br>
-position y: adjust spacing<br>
-drag: draw<br>
+position x: interpolate between normal text and sorted position<br>
 <br>
 KEYS<br>
-all: text input (keyboard)<br>
-backspace: delete last typed letter<br>
+1: toggle alpha mode<br>
 t: switch text display<br>
 s: save png</p>
 </div>
@@ -29,16 +27,16 @@ var width = 800,
     context,
     mouseX = 0,
     mouseY = 0,
-    textTyped = 'Type slow and fast!',
-    fontSizes = [],
-    minFontSize = 20,
-    maxFontSize = 300,
-    newFontSize = 0,
-    maxTimeDelta = 5000.0,
-    spacing = 2,
-    tracking = 0,
-    pMillis = 0,
-    millis = 0;
+    joinedText = '',
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ,.';:!? ",
+    counters,
+    charSize,
+    charColor = 0,
+    posX,
+    posY,
+    oldX,
+    oldY,
+    drawAlpha = -1;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -47,51 +45,70 @@ function setUp() {
     context = canvas.getContext('2d');
     context.canvas.width = width;
     context.canvas.height = height;
+    context.font = "40px 'Courier'";
 
-    for (var i = 0; i < textTyped.length; i++) {
-        fontSizes[i] = minFontSize;
+    joinedText += "January  February  March  April  ";
+    joinedText += "May  June  July  August  ";
+    joinedText += "September  October  November  December";
+
+    countCharacters();
+}
+
+function countCharacters() {
+    counters = Array(joinedText.length),
+    counters.fill(0);
+    for (var i = 0; i < joinedText.length; i++) {
+        var s = joinedText.charAt(i);
+        s = s.toUpperCase();
+        var uppercaseChar = s.charAt(0);
+        var index = alphabet.indexOf(uppercaseChar);
+        if (index >= 0) counters[index]++;
     }
-
-    clearDisplay();
 }
 
 function draw() {
     requestAnimationFrame(function() { draw(); });
 
     clearDisplay();
-    spacing = map(mouseY, 0, height, 0, 120);
-    context.save();
-    context.translate(0, 100 + spacing);
 
-    var x = 0, y = 100 + spacing, fontSize = 20;
+    posX = 20;
+    posY = 80;
+    oldX = 0;
+    oldY = 0;
 
-    for (var i = 0; i < textTyped.length; i++) {
-        fontSize = fontSizes[i];
-        // var font = fontSize + "px 'American Typewriter'";
-        var font = fontSize + "px 'MS ゴシック'";
-        context.font = font;
-        var letter = textTyped.charAt(i);
-        var letterWidth = context.measureText(letter).width + tracking;
+    for (var i = 0; i < joinedText.length; i++) {
+        var s = joinedText.charAt(i).toUpperCase();
+        var uppercaseChar = s.charAt(0);
+        var index = alphabet.indexOf(uppercaseChar);
+        if (index < 0) continue;
 
-        if (x + letterWidth > width) {
-            x = 0;
-            y += spacing; 
+        if (drawAlpha == 1) context.globalAlpha = counters[index] * .1 + .1;
+        else context.globalAlpha = 1;
+
+        var sortY = index * 20 + 100;
+        var m = map(mouseX, 50, width - 50, 0, 1);
+        m = Math.min(Math.max(m, 0), 1);
+        var interY = lerp(posY, sortY, m);
+
+        context.strokeStyle = '#ccc';
+        context.beginPath();
+        context.moveTo(oldX, oldY);
+        context.lineTo(posX, interY);
+        context.stroke();
+
+        context.fillStyle = '#2EFF06';
+        context.fillText(joinedText.charAt(i), posX, interY);
+
+        oldX = posX;
+        oldY = interY;
+
+        var textWidth = context.measureText(joinedText.charAt(i)).width;
+        posX += textWidth;
+        if (posX >= width - 200 && uppercaseChar == ' ') {
+            posY += 200;
+            posX = 20;
         }
-
-        context.fillStyle = '#000';
-        context.globalAlpha = .7;
-        context.fillText(letter, x, y);
-        x += letterWidth;
     }
-
-    var timeDelta = millis - pMillis;
-    newFontSize = map(timeDelta / 2, 0, maxTimeDelta, minFontSize, maxFontSize);
-    newFontSize = Math.min(newFontSize, maxFontSize);
-
-    context.fillStyle = 'rgb(200, 30, 40)';
-    context.fillRect(x, y, newFontSize / 2, newFontSize / 10);
-    millis += 30;
-    context.restore();
 }
 
 function hsvToRgb(h, s, v) {
@@ -130,7 +147,7 @@ function lerp(a, b, c) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#fff';
+    context.fillStyle = '#000032';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
@@ -154,19 +171,7 @@ document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
-
-    if (key == 'Shift') {
-    } else if (key == 'Backspace') {
-        if (0 < textTyped.length) {
-            textTyped = textTyped.slice(0, -1);
-            fontSizes.pop();
-            pMillis = millis;
-        }
-    } else {
-        textTyped += key;
-        fontSizes.push(newFontSize);
-        pMillis = millis;
-    }
+    if (key == '1') drawAlpha *= -1;
 });
 
 document.onclick = function (e) {
