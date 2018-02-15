@@ -16,6 +16,7 @@ position x: tile count horizontally<br>
 position y: tile count vertically<br>
 <br>
 KEYS<br>
+1~4: change image<br>
 s: save png</p>
 </div>
 <script src="../assets/js/downloadCanvas.js"></script>
@@ -27,7 +28,8 @@ var width = 800,
     mouseX = 800,
     mouseY = 800,
     mousePressed = false,
-    img;
+    useImage = 1,
+    img1, img2, img3, img4;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -37,8 +39,14 @@ function setUp() {
     context.canvas.width = width;
     context.canvas.height = height;
 
-    img = document.createElement('img');
-    img.src = './data/image01.png';
+    img1 = document.createElement('img');
+    img1.src = './data/image01.png';
+    img2 = document.createElement('img');
+    img2.src = './data/image02.png';
+    img3 = document.createElement('img');
+    img3.src = './data/image03.png';
+    img4 = document.createElement('img');
+    img4.src = './data/image04.png';
 }
 
 function draw() {
@@ -52,7 +60,10 @@ function draw() {
     var stepY = height / tileCountY;
     for (var gridY = 0; gridY < height; gridY += stepY){
         for (var gridX = 0; gridX < width; gridX += stepX){
-            context.drawImage(img, gridX, gridY, stepX, stepY);
+            if (useImage == 1) context.drawImage(img1, gridX, gridY, stepX, stepY);
+            if (useImage == 2) context.drawImage(img2, gridX, gridY, stepX, stepY);
+            if (useImage == 3) context.drawImage(img3, gridX, gridY, stepX, stepY);
+            if (useImage == 4) context.drawImage(img4, gridX, gridY, stepX, stepY);
         }
     }
 }
@@ -121,6 +132,10 @@ document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
+    if (key == '1') useImage = 1;
+    if (key == '2') useImage = 2;
+    if (key == '3') useImage = 3;
+    if (key == '4') useImage = 4;
 });
 
 document.onclick = function (e) {
