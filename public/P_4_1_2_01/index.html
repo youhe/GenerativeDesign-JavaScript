@@ -2,21 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>P_4_0_01</title>
+<title>P_4_1_2_01</title>
 <link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 <div id="textBox">
-    <h1>P_4_0_01</h1>
+    <h1>P_4_1_2_01</h1>
     <p class="operation">
     <b>OPERATION</b><br>
-MOUSE<br>
-position x: tile count horizontally<br>
-position y: tile count vertically<br>
-<br>
 KEYS<br>
-1-4: change image<br>
 t: switch text display<br>
 s: save png</p>
 </div>
@@ -28,9 +23,8 @@ var width = 800,
     context,
     mouseX = 800,
     mouseY = 800,
-    mousePressed = false,
-    useImage = 1,
-    img1, img2, img3, img4;
+    useImage = 0,
+    imgs = [];
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -40,33 +34,37 @@ function setUp() {
     context.canvas.width = width;
     context.canvas.height = height;
 
-    img1 = document.createElement('img');
-    img1.src = './data/image01.png';
-    img2 = document.createElement('img');
-    img2.src = './data/image02.png';
-    img3 = document.createElement('img');
-    img3.src = './data/image03.png';
-    img4 = document.createElement('img');
-    img4.src = './data/image04.png';
+    imgs[0] = document.createElement('img');
+    imgs[0].src = './data/image01.png';
+    imgs[1] = document.createElement('img');
+    imgs[1].src = './data/image02.png';
+    imgs[2] = document.createElement('img');
+    imgs[2].src = './data/image03.png';
+
+    clearDisplay();
+    var img = imgs[useImage];
+    context.drawImage(img, 0, 0, width, height);
 }
 
 function draw() {
     requestAnimationFrame(function() { draw(); });
 
-    clearDisplay();
+    var img = imgs[useImage];
 
-    var tileCountX = mouseX / 10 + 1;
-    var tileCountY = mouseY / 10 + 1;
-    var stepX = width / tileCountX;
-    var stepY = height / tileCountY;
-    for (var gridY = 0; gridY < height; gridY += stepY){
-        for (var gridX = 0; gridX < width; gridX += stepX){
-            if (useImage == 1) context.drawImage(img1, gridX, gridY, stepX, stepY);
-            if (useImage == 2) context.drawImage(img2, gridX, gridY, stepX, stepY);
-            if (useImage == 3) context.drawImage(img3, gridX, gridY, stepX, stepY);
-            if (useImage == 4) context.drawImage(img4, gridX, gridY, stepX, stepY);
-        }
-    }
+    var x1 = Math.floor(Math.random() * width);
+    var y1 = 0;
+
+    var x2 = Math.round(x1 + Math.random() * 14 - 7);
+    var y2 = Math.round(Math.random() * 40 - 20);
+
+    var w = Math.floor(Math.random() * 10 + 10);
+    var h = height;
+
+    context.drawImage(
+        img,
+        x1, y1, w, h,
+        x2, y2, w, h
+    );
 }
 
 function hsvToRgb(h, s, v) {
@@ -122,21 +120,17 @@ function toggleText() {
 }
 
 document.addEventListener('mousedown', (event) => {
-    mousePressed = true;
 });
 
 document.addEventListener('mouseup', (event) => {
-    mousePressed = false;
+    selectMode = false;
+    cropTiles();
 });
 
 document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
-    if (key == '1') useImage = 1;
-    if (key == '2') useImage = 2;
-    if (key == '3') useImage = 3;
-    if (key == '4') useImage = 4;
 });
 
 document.onclick = function (e) {
@@ -146,6 +140,7 @@ document.onmousemove = function (e) {
     if (!e) e = window.event;
     mouseX = e.clientX;
     mouseY = e.clientY;
+    selectMode = true;
 };
 
 setUp();
