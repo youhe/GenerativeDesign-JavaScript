@@ -12,6 +12,7 @@
     <p class="operation">
     <b>OPERATION</b><br>
 KEYS<br>
+1-3: switch image<br>
 t: switch text display<br>
 s: save png</p>
 </div>
@@ -131,6 +132,9 @@ document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
+    if (key == '1') {useImage = 0;clearDisplay();}
+    if (key == '2') {useImage = 1;clearDisplay();}
+    if (key == '3') {useImage = 2;clearDisplay();}
 });
 
 document.onclick = function (e) {
