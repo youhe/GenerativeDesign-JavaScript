@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_4_2_1_01</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+    <h1>P_4_2_1_01</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+KEYS<br>
+1-3: create a new collage (layer specific)<br>
+t: switch text display<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 800,
+    mouseY = 800,
+    useImage = 0,
+    img1,
+    img2,
+    img3,
+    imgs1 = [],
+    imgs2 = [],
+    imgs3 = [],
+    num1 = 100,
+    num2 = 20,
+    num3 = 50;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    img1 = document.createElement('img');
+    img1.src = './data/image01.png';
+    img2 = document.createElement('img');
+    img2.src = './data/image02.png';
+    img3 = document.createElement('img');
+    img3.src = './data/image03.png';
+
+    setLayer(num1, imgs1);
+    setLayer(num2, imgs2);
+    setLayer(num3, imgs3);
+
+    clearDisplay();
+}
+
+function setLayer(cnt, layer) {
+    for (var i = 0; i < cnt; i++) {
+        layer[i] = {};
+        layer[i].x1 = Math.random() * width;
+        layer[i].y1 = Math.random() * height;
+        layer[i].x2 = Math.random() * 80 - 40 + layer[i].x1;
+        layer[i].y2 = Math.random() * 80 - 40 + layer[i].y1;
+        layer[i].w = Math.random() * 200 + 50;
+        layer[i].h = Math.random() * 200 + 50;
+        layer[i].r = Math.random() * 360 - 180;
+    }
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    clearDisplay();
+
+    for (var i = 0; i < num1; i++) {
+        context.save();
+        context.translate(imgs1[i].x2, imgs1[i].y2);
+        context.rotate(Math.PI / 180 * imgs1[i].r);
+        context.drawImage(
+            img1,
+            imgs1[i].x1, imgs1[i].y1, imgs1[i].w, imgs1[i].h,
+            0, 0, imgs1[i].w, imgs1[i].h
+        );
+        context.restore();
+    }
+
+    for (var i = 0; i < num2; i++) {
+        context.save();
+        context.translate(imgs2[i].x2, imgs2[i].y2);
+        context.rotate(Math.PI / 180 * imgs2[i].r);
+        context.drawImage(
+            img2,
+            imgs2[i].x1, imgs2[i].y1, imgs2[i].w, imgs2[i].h,
+            0, 0, imgs2[i].w, imgs2[i].h
+        );
+        context.restore();
+    }
+
+    for (var i = 0; i < num3; i++) {
+        context.save();
+        context.translate(imgs3[i].x2, imgs3[i].y2);
+        context.rotate(Math.PI / 180 * imgs3[i].r);
+        context.drawImage(
+            img3,
+            imgs3[i].x1, imgs3[i].y1, imgs3[i].w, imgs3[i].h,
+            0, 0, imgs3[i].w, imgs3[i].h
+        );
+        context.restore();
+    }
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+function constrain(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+}
+
+function clearDisplay() {
+    context.fillStyle = '#000';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
+document.addEventListener('mousedown', (event) => {
+});
+
+document.addEventListener('mouseup', (event) => {
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
+    if (key == '1') {setLayer(num1, imgs1);}
+    if (key == '2') {setLayer(num2, imgs2);}
+    if (key == '3') {setLayer(num3, imgs3);}
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
