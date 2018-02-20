@@ -40,8 +40,8 @@ function setUp() {
 }
 
 function draw() {
-    // context.fillStyle = '#fff';
-    // context.fillRect(0, 0, canvasW, canvasH);
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, canvasW, canvasH);
 
     for (var i = 0; i < colorCount; i++) {
         if (i % 2 == 0) {
@@ -53,7 +53,7 @@ function draw() {
             saturationValues[i] = Math.random() * 100;
             brightnessValues[i] = Math.random() * 100;
         }
-        // hueValues[i] = 195;
+        // hueValues[i] = 15;
         // saturationValues[i] = Math.random() * 100;
         // brightnessValues[i] = 100;
     }
