@@ -40,22 +40,22 @@ function setUp() {
 }
 
 function draw() {
-    context.fillStyle = '#fff';
-    context.fillRect(0, 0, canvasW, canvasH);
+    // context.fillStyle = '#fff';
+    // context.fillRect(0, 0, canvasW, canvasH);
 
     for (var i = 0; i < colorCount; i++) {
-        // if (i % 2 == 0) {
-        //     hueValues[i] = Math.random() * 180;
-        //     saturationValues[i] = Math.random() * 100;
-        //     brightnessValues[i] = Math.random() * 100;
-        // } else {
-        //     hueValues[i] = Math.random() * 180 + 180;
-        //     saturationValues[i] = Math.random() * 100;
-        //     brightnessValues[i] = Math.random() * 100;
-        // }
-        hueValues[i] = 195;
-        saturationValues[i] = Math.random() * 100;
-        brightnessValues[i] = 100;
+        if (i % 2 == 0) {
+            hueValues[i] = Math.random() * 180;
+            saturationValues[i] = Math.random() * 100;
+            brightnessValues[i] = Math.random() * 100;
+        } else {
+            hueValues[i] = Math.random() * 180 + 180;
+            saturationValues[i] = Math.random() * 100;
+            brightnessValues[i] = Math.random() * 100;
+        }
+        // hueValues[i] = 195;
+        // saturationValues[i] = Math.random() * 100;
+        // brightnessValues[i] = 100;
     }
     colorsSetRgb();
 

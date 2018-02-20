@@ -32,8 +32,8 @@ var width = 800,
     imgs2 = [],
     imgs3 = [],
     num1 = 100,
-    num2 = 20,
-    num3 = 50;
+    num2 = 80,
+    num3 = 30;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -50,23 +50,25 @@ function setUp() {
     img3 = document.createElement('img');
     img3.src = './data/image03.png';
 
-    setLayer(num1, imgs1);
-    setLayer(num2, imgs2);
-    setLayer(num3, imgs3);
+    setLayer(1, num1, imgs1);
+    setLayer(2, num2, imgs2);
+    setLayer(3, num3, imgs3);
 
     clearDisplay();
 }
 
-function setLayer(cnt, layer) {
+function setLayer(index, cnt, layer) {
     for (var i = 0; i < cnt; i++) {
         layer[i] = {};
-        layer[i].x1 = Math.random() * width;
-        layer[i].y1 = Math.random() * height;
+        layer[i].w = Math.random() * 300 + 50;
+        layer[i].h = Math.random() * 100 + 30;
+        layer[i].x1 = Math.random() * width - (layer[i].w / 2);
+        layer[i].y1 = Math.random() * height - (layer[i].h / 2);
         layer[i].x2 = Math.random() * 80 - 40 + layer[i].x1;
         layer[i].y2 = Math.random() * 80 - 40 + layer[i].y1;
-        layer[i].w = Math.random() * 200 + 50;
-        layer[i].h = Math.random() * 200 + 50;
-        layer[i].r = Math.random() * 360 - 180;
+        if (index == 1) layer[i].r = Math.random() * 360 - 180;
+        if (index == 2) layer[i].r = 0;
+        if (index == 3) layer[i].r = 0;
     }
 }
 
@@ -76,6 +78,7 @@ function draw() {
     clearDisplay();
 
     for (var i = 0; i < num1; i++) {
+        context.globalAlpha = .8;
         context.save();
         context.translate(imgs1[i].x2, imgs1[i].y2);
         context.rotate(Math.PI / 180 * imgs1[i].r);
@@ -88,6 +91,7 @@ function draw() {
     }
 
     for (var i = 0; i < num2; i++) {
+        context.globalAlpha = 1;
         context.save();
         context.translate(imgs2[i].x2, imgs2[i].y2);
         context.rotate(Math.PI / 180 * imgs2[i].r);
@@ -100,6 +104,7 @@ function draw() {
     }
 
     for (var i = 0; i < num3; i++) {
+        context.globalAlpha = 1;
         context.save();
         context.translate(imgs3[i].x2, imgs3[i].y2);
         context.rotate(Math.PI / 180 * imgs3[i].r);
@@ -152,7 +157,7 @@ function constrain(val, min, max) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#000';
+    context.fillStyle = '#fff';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
@@ -174,9 +179,9 @@ document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
-    if (key == '1') {setLayer(num1, imgs1);}
-    if (key == '2') {setLayer(num2, imgs2);}
-    if (key == '3') {setLayer(num3, imgs3);}
+    if (key == '1') {setLayer(1, num1, imgs1);}
+    if (key == '2') {setLayer(2, num2, imgs2);}
+    if (key == '3') {setLayer(3, num3, imgs3);}
 });
 
 document.onclick = function (e) {
