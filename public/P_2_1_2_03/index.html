@@ -22,8 +22,8 @@ var width = 800,
     height = 800,
     canvas,
     context,
-    mouseX = 0,
-    mouseY = 0,
+    mouseX = 200,
+    mouseY = 100,
     tileCount = 20,
     max_distance = 500;
 
@@ -35,16 +35,16 @@ function setUp() {
     context = canvas.getContext('2d');
     context.canvas.width = width;
     context.canvas.height = height;
-    context.strokeStyle = '#000';
-    context.globalAlpha = .6;
-    context.lineWidth = 2;
+    context.strokeStyle = '#c30';
+    context.globalAlpha = 1;
+    context.lineWidth = 3;
 }
 
 function draw() {
     requestAnimationFrame(function () { draw(); });
 
     context.fillStyle = '#fff';
-    context.fillRect(0, 0, width, height);
+    // context.fillRect(0, 0, width, height);
 
     for (var gridY = 0; gridY < width; gridY += 40) {
         for (var gridX = 0; gridX < height; gridX += 40) {
