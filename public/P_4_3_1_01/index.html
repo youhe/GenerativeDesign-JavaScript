@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_4_3_1_01</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+    <h1>P_4_3_1_01</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+MOUSE<br>
+position x/y: various parameters (depending on draw mode)<br>
+<br>
+KEYS<br>
+1-9: switch draw mode<br>
+t: switch text display<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 400,
+    mouseY = 400,
+    drawMode = 1,
+    imgSrc = 'data/image01.jpg',
+    imgData = [],
+    imgW = 80,
+    imgH = 80;
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    getImgData();
+    clearDisplay();
+}
+
+function getImgData() {
+  var img = new Image();
+  img.onload = function () {
+    var imgCanvas = document.createElement('canvas');
+    var imgContext = imgCanvas.getContext('2d');
+    imgContext.canvas.width = imgW;
+    imgContext.canvas.height = imgH;
+    imgContext.drawImage(img, 0, 0, imgW, imgH);
+    var imgColor = imgContext.getImageData(0, 0, imgW, imgH);
+    imgData = imgColor.data;
+    draw();
+  };
+  img.src = imgSrc;
+}
+
+function draw() {
+    // requestAnimationFrame(function() { draw(); });
+
+    clearDisplay();
+
+    var mouseXFactor = map(mouseX, 0, width, 0.05, 1);
+    var mouseYFactor = map(mouseY, 0, height, 0.05, 1);
+
+    if (imgData.length == 0) return;
+    for (var gridX = 0; gridX < imgW; gridX++) {
+        for (var gridY = 0; gridY < imgH; gridY++) {
+            var tileWidth = width / imgW;
+            var tileHeight = height / imgH;
+            var posX = tileWidth * gridX;
+            var posY = tileHeight * gridY;
+
+            var r = imgData[gridY * imgW + gridX + 0];
+            var g = imgData[gridY * imgW + gridX + 1];
+            var b = imgData[gridY * imgW + gridX + 2];
+            var greyscale = Math.round((r*0.222) + (g*0.707) + (b*0.071));
+
+            switch(drawMode) {
+            case 1:
+                var w1 = map(greyscale, 0, 255, 15, 1);
+                context.strokeStyle = "#000";
+                context.lineWidth = (w1 * mouseXFactor);
+                context.beginPath();
+                context.moveTo(posX, posY);
+                context.lineTo(posX + 5, posY + 5);
+                context.stroke();
+                break;
+        // case 2:
+        //   // greyscale to ellipse area
+        //   fill(0);
+        //   noStroke();
+        //   float r2 = 1.1284 * sqrt(tileWidth*tileWidth*(1-greyscale/255.0));
+        //   r2 = r2 * mouseXFactor * 3;
+        //   ellipse(posX, posY, r2, r2);
+        //   break;
+        // case 3:
+        //   // greyscale to line length
+        //   float l3 = map(greyscale, 0,255, 30,0.1);
+        //   l3 = l3 * mouseXFactor;
+        //   stroke(0);
+        //   strokeWeight(10 * mouseYFactor);
+        //   line(posX, posY, posX+l3, posY+l3);
+        //   break;
+        // case 4:
+        //   // greyscale to rotation, line length and stroke weight
+        //   stroke(0);
+        //   float w4 = map(greyscale, 0,255, 10,0);
+        //   strokeWeight(w4 * mouseXFactor + 0.1);
+        //   float l4 = map(greyscale, 0,255, 35,0);
+        //   l4 = l4 * mouseYFactor;
+        //   pushMatrix();
+        //   translate(posX, posY);
+        //   rotate(greyscale/255.0 * PI);
+        //   line(0, 0, 0+l4, 0+l4);
+        //   popMatrix();
+        //   break;
+        // case 5:
+        //   // greyscale to line relief
+        //   float w5 = map(greyscale,0,255,5,0.2);
+        //   strokeWeight(w5 * mouseYFactor + 0.1);
+        //   // get neighbour pixel, limit it to image width
+        //   color c2 = img.get(min(gridX+1,img.width-1), gridY);
+        //   stroke(c2);
+        //   int greyscale2 = int(red(c2)*0.222 + green(c2)*0.707 + blue(c2)*0.071);
+        //   float h5 = 50 * mouseXFactor;
+        //   float d1 = map(greyscale, 0,255, h5,0);
+        //   float d2 = map(greyscale2, 0,255, h5,0);
+        //   line(posX-d1, posY+d1, posX+tileWidth-d2, posY+d2);
+        //   break;
+        // case 6:
+        //   // pixel color to fill, greyscale to ellipse size
+        //   float w6 = map(greyscale, 0,255, 25,0);
+        //   noStroke();
+        //   fill(c);
+        //   ellipse(posX, posY, w6 * mouseXFactor, w6 * mouseXFactor);
+        //   break;
+        // case 7:
+        //   stroke(c);
+        //   float w7 = map(greyscale, 0,255, 5,0.1);
+        //   strokeWeight(w7);
+        //   fill(255,255* mouseXFactor);
+        //   pushMatrix();
+        //   translate(posX, posY);
+        //   rotate(greyscale/255.0 * PI* mouseYFactor);
+        //   rect(0,0,15,15);
+        //   popMatrix();
+        //   break;
+        // case 8:
+        //   noStroke();
+        //   fill(greyscale,greyscale * mouseXFactor,255* mouseYFactor);
+        //   rect(posX,posY,3.5,3.5);
+        //   rect(posX+4,posY,3.5,3.5);
+        //   rect(posX,posY+4,3.5,3.5);
+        //   rect(posX+4,posY+4,3.5,3.5);
+        //   break;
+        // case 9:
+        //   stroke(255,greyscale,0);
+        //   noFill();
+        //   pushMatrix();
+        //   translate(posX, posY);
+        //   rotate(greyscale/255.0 * PI);
+        //   strokeWeight(1);
+        //   rect(0,0,15* mouseXFactor,15* mouseYFactor);
+        //   float w9 = map(greyscale, 0,255, 15,0.1);
+        //   strokeWeight(w9);
+        //   stroke(0,70);
+        //   ellipse(0,0,10,5);
+        //   popMatrix();
+        //   break;
+            }
+        }
+    }
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+function constrain(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+}
+
+function clearDisplay() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
+document.addEventListener('mousedown', (event) => {
+});
+
+document.addEventListener('mouseup', (event) => {
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
+    if (key == '1') {drawMode = 1;}
+    if (key == '2') {drawMode = 2;}
+    if (key == '3') {drawMode = 3;}
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
