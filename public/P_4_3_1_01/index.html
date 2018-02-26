@@ -15,7 +15,7 @@ MOUSE<br>
 position x/y: various parameters (depending on draw mode)<br>
 <br>
 KEYS<br>
-1-9: switch draw mode<br>
+1-4: switch draw mode<br>
 t: switch text display<br>
 s: save png</p>
 </div>
@@ -25,10 +25,10 @@ var width = 800,
     height = 800,
     canvas,
     context,
-    mouseX = 400,
-    mouseY = 400,
-    drawMode = 1,
-    imgSrc = 'data/image01.jpg',
+    mouseX = 0,
+    mouseY = 0,
+    drawMode = 6,
+    imgSrc = 'data/image01.png',
     imgData = [],
     imgW = 80,
     imgH = 80;
@@ -55,13 +55,12 @@ function getImgData() {
     imgContext.drawImage(img, 0, 0, imgW, imgH);
     var imgColor = imgContext.getImageData(0, 0, imgW, imgH);
     imgData = imgColor.data;
-    draw();
   };
   img.src = imgSrc;
 }
 
 function draw() {
-    // requestAnimationFrame(function() { draw(); });
+    requestAnimationFrame(function() { draw(); });
 
     clearDisplay();
 
@@ -76,81 +75,89 @@ function draw() {
             var posX = tileWidth * gridX;
             var posY = tileHeight * gridY;
 
-            var r = imgData[gridY * imgW + gridX + 0];
-            var g = imgData[gridY * imgW + gridX + 1];
-            var b = imgData[gridY * imgW + gridX + 2];
+            var r = imgData[(gridY * imgW + gridX) * 4 + 0];
+            var g = imgData[(gridY * imgW + gridX) * 4 + 1];
+            var b = imgData[(gridY * imgW + gridX) * 4 + 2];
             var greyscale = Math.round((r*0.222) + (g*0.707) + (b*0.071));
 
             switch(drawMode) {
             case 1:
-                var w1 = map(greyscale, 0, 255, 15, 1);
+                var w1 = map(greyscale, 0, 255, 30, .5);
                 context.strokeStyle = "#000";
                 context.lineWidth = (w1 * mouseXFactor);
                 context.beginPath();
-                context.moveTo(posX, posY);
-                context.lineTo(posX + 5, posY + 5);
+                context.moveTo(posX + 2, posY + 2);
+                context.lineTo(posX + 7, posY + 7);
                 context.stroke();
                 break;
-        // case 2:
-        //   // greyscale to ellipse area
-        //   fill(0);
-        //   noStroke();
-        //   float r2 = 1.1284 * sqrt(tileWidth*tileWidth*(1-greyscale/255.0));
-        //   r2 = r2 * mouseXFactor * 3;
-        //   ellipse(posX, posY, r2, r2);
-        //   break;
-        // case 3:
-        //   // greyscale to line length
-        //   float l3 = map(greyscale, 0,255, 30,0.1);
-        //   l3 = l3 * mouseXFactor;
-        //   stroke(0);
-        //   strokeWeight(10 * mouseYFactor);
-        //   line(posX, posY, posX+l3, posY+l3);
-        //   break;
-        // case 4:
-        //   // greyscale to rotation, line length and stroke weight
-        //   stroke(0);
-        //   float w4 = map(greyscale, 0,255, 10,0);
-        //   strokeWeight(w4 * mouseXFactor + 0.1);
-        //   float l4 = map(greyscale, 0,255, 35,0);
-        //   l4 = l4 * mouseYFactor;
-        //   pushMatrix();
-        //   translate(posX, posY);
-        //   rotate(greyscale/255.0 * PI);
-        //   line(0, 0, 0+l4, 0+l4);
-        //   popMatrix();
-        //   break;
-        // case 5:
-        //   // greyscale to line relief
-        //   float w5 = map(greyscale,0,255,5,0.2);
-        //   strokeWeight(w5 * mouseYFactor + 0.1);
-        //   // get neighbour pixel, limit it to image width
-        //   color c2 = img.get(min(gridX+1,img.width-1), gridY);
-        //   stroke(c2);
-        //   int greyscale2 = int(red(c2)*0.222 + green(c2)*0.707 + blue(c2)*0.071);
-        //   float h5 = 50 * mouseXFactor;
-        //   float d1 = map(greyscale, 0,255, h5,0);
-        //   float d2 = map(greyscale2, 0,255, h5,0);
-        //   line(posX-d1, posY+d1, posX+tileWidth-d2, posY+d2);
-        //   break;
-        // case 6:
-        //   // pixel color to fill, greyscale to ellipse size
-        //   float w6 = map(greyscale, 0,255, 25,0);
-        //   noStroke();
-        //   fill(c);
-        //   ellipse(posX, posY, w6 * mouseXFactor, w6 * mouseXFactor);
-        //   break;
-        // case 7:
-        //   stroke(c);
-        //   float w7 = map(greyscale, 0,255, 5,0.1);
-        //   strokeWeight(w7);
-        //   fill(255,255* mouseXFactor);
-        //   pushMatrix();
-        //   translate(posX, posY);
-        //   rotate(greyscale/255.0 * PI* mouseYFactor);
-        //   rect(0,0,15,15);
-        //   popMatrix();
-        //   break;
+            case 2:
+                context.fillStyle = '#000';
+                var r2 = 1.1284 * Math.sqrt(tileWidth*tileWidth*(1-greyscale/255.0));
+                r2 = r2 * mouseXFactor * 1;
+                context.beginPath();
+                context.arc(posX + 5, posY + 5, r2, 0, Math.PI * 2, false);
+                context.fill();
+                break;
+            case 3:
+                var l3 = map(greyscale, 0, 255, 30, 0.1);
+                l3 = l3 * mouseXFactor;
+                context.strokeStyle = "#000";
+                context.lineWidth = (10 * mouseYFactor);
+                context.beginPath();
+                context.moveTo(posX, posY);
+                context.lineTo(posX+l3, posY+l3);
+                context.stroke();
+                break;
+            case 4:
+                context.strokeStyle = "#000";
+                var w4 = map(greyscale, 0,255, 10,0);
+                context.lineWidth = (w4 * mouseXFactor + 0.1);
+                var l4 = map(greyscale, 0,255, 35,0);
+                l4 = l4 * mouseYFactor;
+                context.save();
+                context.translate(posX, posY);
+                context.rotate(greyscale/255.0 * Math.PI);
+                context.beginPath();
+                context.moveTo(0, 0);
+                context.lineTo(0+l4, 0+l4);
+                context.stroke();
+                context.restore();
+                break;
+            case 5:
+                context.strokeStyle = "#000";
+                var w5 = map(greyscale, 0, 255, 5, 0.2);
+                context.lineWidth = (w5 * mouseYFactor + 0.1);
+                var r2 = imgData[gridY * imgW + (Math.min(gridX+1,imgW-1)) * 4 + 0];
+                var g2 = imgData[gridY * imgW + (Math.min(gridX+1,imgW-1)) * 4 + 1];
+                var b2 = imgData[gridY * imgW + (Math.min(gridX+1,imgW-1)) * 4 + 2];
+
+                var greyscale2 = (r2*0.222 + g2*0.707 + b2*0.071) / 1;
+                var h5 = 50 * mouseXFactor;
+                var d1 = map(greyscale, 0, 255, h5, 0);
+                var d2 = map(greyscale2, 0, 255, h5, 0);
+                context.beginPath();
+                context.moveTo(posX-d1, posY+d1);
+                context.lineTo(posX+tileWidth-d2, posY+d2);
+                context.stroke();
+                break;
+            case 6:
+                var w6 = map(greyscale, 0,255, 25,0);
+                context.fillStyle = '#000';
+                context.beginPath();
+                context.arc(posX, posY, w6 * mouseXFactor, 0, Math.PI * 2, false);
+                context.fill();
+                break;
+            // case 7:
+            //     stroke(c);
+            //     float w7 = map(greyscale, 0,255, 5,0.1);
+            //     strokeWeight(w7);
+            //     fill(255,255* mouseXFactor);
+            //     pushMatrix();
+            //     translate(posX, posY);
+            //     rotate(greyscale/255.0 * PI* mouseYFactor);
+            //     rect(0,0,15,15);
+            //     popMatrix();
+            //     break;
         // case 8:
         //   noStroke();
         //   fill(greyscale,greyscale * mouseXFactor,255* mouseYFactor);
@@ -218,7 +225,7 @@ function constrain(val, min, max) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#fff';
+    context.fillStyle = '#C9DCED';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
@@ -243,6 +250,12 @@ document.addEventListener('keydown', (event) => {
     if (key == '1') {drawMode = 1;}
     if (key == '2') {drawMode = 2;}
     if (key == '3') {drawMode = 3;}
+    if (key == '4') {drawMode = 4;}
+    if (key == '5') {drawMode = 5;}
+    if (key == '6') {drawMode = 6;}
+    if (key == '7') {drawMode = 7;}
+    if (key == '8') {drawMode = 8;}
+    if (key == '9') {drawMode = 9;}
 });
 
 document.onclick = function (e) {
