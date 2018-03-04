@@ -15,7 +15,7 @@ MOUSE<br>
 position x/y: various parameters (depending on draw mode)<br>
 <br>
 KEYS<br>
-1-4: switch draw mode<br>
+1-7: switch draw mode<br>
 t: switch text display<br>
 s: save png</p>
 </div>
@@ -27,8 +27,8 @@ var width = 800,
     context,
     mouseX = 0,
     mouseY = 0,
-    drawMode = 6,
-    imgSrc = 'data/image01.png',
+    drawMode = 1,
+    imgSrc = 'data/image01.jpg',
     imgData = [],
     imgW = 80,
     imgH = 80;
@@ -83,25 +83,36 @@ function draw() {
             switch(drawMode) {
             case 1:
                 var w1 = map(greyscale, 0, 255, 30, .5);
-                context.strokeStyle = "#000";
+                r = r * 2;
+                g = g * 1.5;
+                b = 0;
+                context.strokeStyle = "rgb("+r+","+g+","+b+")";
+                // context.strokeStyle = "#000";
                 context.lineWidth = (w1 * mouseXFactor);
                 context.beginPath();
                 context.moveTo(posX + 2, posY + 2);
-                context.lineTo(posX + 7, posY + 7);
+                context.lineTo(posX + 5, posY + 5);
                 context.stroke();
                 break;
             case 2:
-                context.fillStyle = '#000';
+                // context.fillStyle = '#000';
+                context.strokeStyle = '#000';
+                var w1 = map(greyscale, 0, 255, 10, .5);
+                // context.lineWidth = w1 * mouseXFactor;
+                context.lineWidth = 1;
+
                 var r2 = 1.1284 * Math.sqrt(tileWidth*tileWidth*(1-greyscale/255.0));
                 r2 = r2 * mouseXFactor * 1;
+
                 context.beginPath();
                 context.arc(posX + 5, posY + 5, r2, 0, Math.PI * 2, false);
-                context.fill();
+                context.stroke();
                 break;
             case 3:
                 var l3 = map(greyscale, 0, 255, 30, 0.1);
                 l3 = l3 * mouseXFactor;
-                context.strokeStyle = "#000";
+                // context.strokeStyle = "#000";
+                context.strokeStyle = "rgb("+0+","+g+","+b+")";
                 context.lineWidth = (10 * mouseYFactor);
                 context.beginPath();
                 context.moveTo(posX, posY);
@@ -147,39 +158,21 @@ function draw() {
                 context.arc(posX, posY, w6 * mouseXFactor, 0, Math.PI * 2, false);
                 context.fill();
                 break;
-            // case 7:
-            //     stroke(c);
-            //     float w7 = map(greyscale, 0,255, 5,0.1);
-            //     strokeWeight(w7);
-            //     fill(255,255* mouseXFactor);
-            //     pushMatrix();
-            //     translate(posX, posY);
-            //     rotate(greyscale/255.0 * PI* mouseYFactor);
-            //     rect(0,0,15,15);
-            //     popMatrix();
-            //     break;
-        // case 8:
-        //   noStroke();
-        //   fill(greyscale,greyscale * mouseXFactor,255* mouseYFactor);
-        //   rect(posX,posY,3.5,3.5);
-        //   rect(posX+4,posY,3.5,3.5);
-        //   rect(posX,posY+4,3.5,3.5);
-        //   rect(posX+4,posY+4,3.5,3.5);
-        //   break;
-        // case 9:
-        //   stroke(255,greyscale,0);
-        //   noFill();
-        //   pushMatrix();
-        //   translate(posX, posY);
-        //   rotate(greyscale/255.0 * PI);
-        //   strokeWeight(1);
-        //   rect(0,0,15* mouseXFactor,15* mouseYFactor);
-        //   float w9 = map(greyscale, 0,255, 15,0.1);
-        //   strokeWeight(w9);
-        //   stroke(0,70);
-        //   ellipse(0,0,10,5);
-        //   popMatrix();
-        //   break;
+            case 7:
+                context.strokeStyle = "#fff";
+                var w7 = map(greyscale, 0,255, 5,0.1);
+                context.lineWidth = w7;
+                context.globalAlpha = .5;
+                // fill(255,255* mouseXFactor);
+                context.fillStyle = '#000';
+                context.save();
+                context.beginPath();
+                context.translate(posX, posY);
+                context.rotate(greyscale/255.0 * Math.PI* mouseYFactor);
+                context.rect(10,0,15,15);
+                context.stroke();
+                context.restore();
+                break;
             }
         }
     }
@@ -225,7 +218,7 @@ function constrain(val, min, max) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#C9DCED';
+    context.fillStyle = '#82AAD6';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
