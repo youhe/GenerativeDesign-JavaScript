@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_4_3_2_01</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+    <h1>P_4_3_2_01</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+KEYS<br>
+1: toogle font size mode (dynamic/static)<br>
+2: toogle font color mode (color/b&w)<br>
+arrow up/down: maximal fontsize +/-<br>
+arrow right/left: minimal fontsize +/-<br>
+t: switch text display<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    inputText = "abcdefg hijklmn opqrstu vwxyz ";
+    fontSizeMax = 50,
+    fontSizeMin = 10,
+    fontSize = 10,
+    spacing = 20,
+    kerning = 5,
+    fontSizeStatic = -1,
+    blackAndWhite = -1;
+    imgW = 80,
+    imgH = 80,
+    imgSrc = 'data/image01.jpg',
+    imgData = [];
+
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    getImgData();
+    clearDisplay();
+}
+
+function getImgData() {
+  var img = new Image();
+  img.onload = function () {
+    var imgCanvas = document.createElement('canvas');
+    var imgContext = imgCanvas.getContext('2d');
+    imgContext.canvas.width = imgW;
+    imgContext.canvas.height = imgH;
+    imgContext.drawImage(img, 0, 0, imgW, imgH);
+    var imgColor = imgContext.getImageData(0, 0, imgW, imgH);
+    imgData = imgColor.data;
+    draw();
+  };
+  img.src = imgSrc;
+}
+
+function draw() {
+    clearDisplay();
+
+    var x = 0, y = 10;
+    var counter = 0;
+
+    while (y < height) {
+        var imgX = Math.floor(map(x, 0,width, 0,imgW));
+        var imgY = Math.floor(map(y, 0,height, 0,imgH));
+        var r = imgData[(imgY*imgW+imgX)*4+0];
+        var g = imgData[(imgY*imgW+imgX)*4+1];
+        var b = imgData[(imgY*imgW+imgX)*4+2];
+        var greyscale = Math.round(r*0.222 + g*0.707 + b*0.071);
+
+        context.save();
+        context.translate(x, y+10);
+
+        if (fontSizeStatic == 1) {
+            var font = fontSize + "px 'Times'";
+            if (blackAndWhite == 1) {
+                var color = 'rgb('+greyscale+','+greyscale+','+greyscale+')';
+                context.fillStyle = color;
+            } else {
+                context.fillStyle = 'rgb('+r+','+g+','+b+')';
+            }
+        } else {
+            fontSize = map(greyscale, 0,255, fontSizeMax,fontSizeMin);
+            fontSize = Math.max(fontSize, 10);
+            var font = fontSize + "px 'Times'";
+            if (blackAndWhite == 1) context.fillStyle = 'rgb(0, 0, 0)';
+            else context.fillStyle = 'rgb('+r+','+g+','+b+')';
+        } 
+
+        context.font = font;
+        var letter = inputText.charAt(counter);
+        context.fillText(letter, 0, 0);
+        context.restore();
+
+        var letterWidth = context.measureText(letter).width + kerning;
+        x = x + letterWidth;
+
+        if (x+letterWidth >= width) {
+            x = 0;
+            y = y + spacing;
+        }
+
+        counter++;
+        if (counter > inputText.length-1) counter = 0;
+    }
+
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+function constrain(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+}
+
+function clearDisplay() {
+    context.fillStyle = '#eee';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
+document.addEventListener('mousedown', (event) => {
+});
+
+document.addEventListener('mouseup', (event) => {
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
+    if (key == '1') {fontSizeStatic *= -1; draw()}
+    if (key == '2') {blackAndWhite *= -1; draw();}
+    if (key == 'ArrowUp') {fontSizeMax += 2; draw()}
+    if (key == 'ArrowDown') {fontSizeMax -= 2; draw()}
+    if (key == 'ArrowRight') {fontSizeMin += 2; draw()}
+    if (key == 'ArrowLeft') {fontSizeMin -= 2; draw()}
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
