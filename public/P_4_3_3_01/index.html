@@ -39,7 +39,7 @@ var width = 800,
     diffusion = 50,
     imgW = 800,
     imgH = 800,
-    imgSrc = 'data/4.jpg',
+    imgSrc = 'data/2.jpg',
     imgData = [];
 
 function setUp() {
@@ -80,10 +80,10 @@ function draw() {
         var r = imgData[pixelIndex*4+0];
         var g = imgData[pixelIndex*4+1];
         var b = imgData[pixelIndex*4+2];
-        context.lineWidth = 2;
+        context.lineWidth = 1;
         context.strokeStyle = 'rgb('+r+','+g+','+b+')';
 
-        diffusion = map(mouseY, 0,height, 5,100);
+        diffusion = map(mouseY, 0,height, 5,50);
 
         context.save();
         context.beginPath();
@@ -93,10 +93,8 @@ function draw() {
             curvePointX = constrain(x+rx, 0, width-1);
             var ry = Math.floor(Math.random() * diffusion - (diffusion/2));
             curvePointY = constrain(y+ry, 0, height-1);
-            // curveVertex(curvePointX, curvePointY);
             context.lineTo(curvePointX, curvePointY);
         }
-        // curveVertex(curvePointX, curvePointY);
         context.stroke();
         context.restore();
 
@@ -145,7 +143,7 @@ function constrain(val, min, max) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#000';
+    context.fillStyle = '#666';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
