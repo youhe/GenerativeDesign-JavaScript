@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_4_3_3_02</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+    <h1>P_4_3_3_02</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+MOUSE<br>
+position x: drawing speed<br>
+position y: diffusion<br>
+<br>
+KEYS<br>
+arrow up: number of curve points +<br>
+arrow down: number of curve points -<br>
+q: stop drawing<br>
+w: continue drawing<br>
+t: switch text display<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    noLoop = false,
+    pixelIndex,
+    x1, x2, x3, y1, y2, y3,
+    curvePointX = 0,
+    curvePointY = 0,
+    counter = 0,
+    maxCounter = 1000,
+    imgW = 800,
+    imgH = 800,
+    imgSrc = 'data/3.jpg',
+    imgData = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    x1 = 0;
+    y1 = height/2;
+    x2 = width/2;
+    y2 = 0;
+    x3 = width;
+    y3 = height/2;
+
+    clearDisplay();
+    getImgData();
+}
+
+function getImgData() {
+    var img = new Image();
+    img.onload = function () {
+        var imgCanvas = document.createElement('canvas');
+        var imgContext = imgCanvas.getContext('2d');
+        imgContext.canvas.width = imgW;
+        imgContext.canvas.height = imgH;
+        imgContext.drawImage(img, 0, 0, imgW, imgH);
+        var imgColor = imgContext.getImageData(0, 0, imgW, imgH);
+        imgData = imgColor.data;
+        draw();
+    };
+    img.src = imgSrc;
+}
+
+function draw() {
+    if (!noLoop) requestAnimationFrame(function() { draw(); });
+
+    // first line
+    pixelIndex = Math.floor(y1*imgW+x1);
+    var r = imgData[pixelIndex*4+0];
+    var g = imgData[pixelIndex*4+1];
+    var b = imgData[pixelIndex*4+2];
+    var hueValue = (r+g+b)/200;
+    context.lineWidth = hueValue;
+    context.strokeStyle = 'rgb('+r+','+g+','+b+')';
+
+    context.save();
+    context.beginPath();
+    context.moveTo(x1, y1);
+    for (var i = 0; i < 7; i++) {
+      curvePointX = constrain(x1+Math.random()*200-100, 0, width-1);
+      curvePointY = constrain(y1+Math.random()*200-100, 0, height-1);
+      context.lineTo(curvePointX, curvePointY);
+    }
+    context.stroke();
+    x1 = curvePointX;
+    y1 = curvePointY;
+
+    // second line
+    // pixelIndex = Math.floor(y2*imgW+x2);
+    // var r = imgData[pixelIndex*4+0];
+    // var g = imgData[pixelIndex*4+1];
+    // var b = imgData[pixelIndex*4+2];
+    // var hueValue = (r+g+b)/200;
+    // context.lineWidth = hueValue;
+    // context.strokeStyle = 'rgb('+r+','+g+','+b+')';
+    //
+    // context.save();
+    // context.beginPath();
+    // context.moveTo(x2, y2);
+    // for (var i = 0; i < 7; i++) {
+    //   curvePointX = constrain(x2+Math.random()*200-100, 0, width-1);
+    //   curvePointY = constrain(y2+Math.random()*200-100, 0, height-1);
+    //   context.lineTo(curvePointX, curvePointY);
+    // }
+    // context.stroke();
+    // x2 = curvePointX;
+    // y2 = curvePointY;
+
+    // third line
+    pixelIndex = Math.floor(y3*imgW+x3);
+    var r = imgData[pixelIndex*4+0];
+    var g = imgData[pixelIndex*4+1];
+    var b = imgData[pixelIndex*4+2];
+    var hueValue = (r+g+b)/200;
+    context.lineWidth = hueValue;
+    context.strokeStyle = 'rgb('+r+','+g+','+b+')';
+
+    context.save();
+    context.beginPath();
+    context.moveTo(x3, y3);
+    for (var i = 0; i < 7; i++) {
+      curvePointX = constrain(x3+Math.random()*200-100, 0, width-1);
+      curvePointY = constrain(y3+Math.random()*200-100, 0, height-1);
+      context.lineTo(curvePointX, curvePointY);
+    }
+    context.stroke();
+    x3 = curvePointX;
+    y3 = curvePointY;
+
+    counter++;
+    if (counter>=maxCounter) noLoop = true;
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+function constrain(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+}
+
+function clearDisplay() {
+    context.fillStyle = '#666';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
+document.addEventListener('mousedown', (event) => {
+});
+
+document.addEventListener('mouseup', (event) => {
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
+    if (key == '1') {fontSizeStatic *= -1; draw()}
+    if (key == '2') {blackAndWhite *= -1; draw();}
+    if (key == 'ArrowUp') {fontSizeMax += 2; draw()}
+    if (key == 'ArrowDown') {fontSizeMax -= 2; draw()}
+    if (key == 'ArrowRight') {fontSizeMin += 2; draw()}
+    if (key == 'ArrowLeft') {fontSizeMin -= 2; draw()}
+});
+
+document.onclick = function (e) {
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
