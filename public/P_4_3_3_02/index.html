@@ -35,7 +35,7 @@ var width = 800,
     curvePointX = 0,
     curvePointY = 0,
     counter = 0,
-    maxCounter = 30,
+    maxCounter = 10,
     imgW = 800,
     imgH = 800,
     imgSrc = 'data/3.jpg',
@@ -106,6 +106,8 @@ function draw() {
     context.stroke();
     x1 = curvePointX;
     y1 = curvePointY;
+    x1 = 0;
+    y1 = Math.random() * height;
 
     // third line
     // pixelIndex = Math.floor(y3*imgW+x3);
@@ -175,7 +177,7 @@ function constrain(val, min, max) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#ffffff';
+    context.fillStyle = '#e0ffe0';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
