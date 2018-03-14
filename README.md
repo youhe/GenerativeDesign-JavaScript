@@ -2,4 +2,4 @@
 
 [demo site](http://jd-js.youhe.jp/)
 
-[<img src="./ss.png" width="50%">](./ss.png)
+[<img src="./ss.png" width="100%">](./ss.png)
