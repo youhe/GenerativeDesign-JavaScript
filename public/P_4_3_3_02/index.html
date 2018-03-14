@@ -35,7 +35,7 @@ var width = 800,
     curvePointX = 0,
     curvePointY = 0,
     counter = 0,
-    maxCounter = 1000,
+    maxCounter = 30,
     imgW = 800,
     imgH = 800,
     imgSrc = 'data/3.jpg',
@@ -70,6 +70,10 @@ function getImgData() {
         imgContext.drawImage(img, 0, 0, imgW, imgH);
         var imgColor = imgContext.getImageData(0, 0, imgW, imgH);
         imgData = imgColor.data;
+
+        context.globalAlpha = 0;
+        context.drawImage(img, 0, 0, width, height);
+
         draw();
     };
     img.src = imgSrc;
@@ -83,63 +87,49 @@ function draw() {
     var r = imgData[pixelIndex*4+0];
     var g = imgData[pixelIndex*4+1];
     var b = imgData[pixelIndex*4+2];
-    var hueValue = (r+g+b)/200;
-    context.lineWidth = hueValue;
+    var hueValue = r+g+b;
+    context.lineWidth = hueValue/60;
     context.strokeStyle = 'rgb('+r+','+g+','+b+')';
+    context.globalAlpha = 1 - (hueValue/1000);
+    context.globalAlpha = .5;
 
     context.save();
     context.beginPath();
     context.moveTo(x1, y1);
-    for (var i = 0; i < 7; i++) {
-      curvePointX = constrain(x1+Math.random()*200-100, 0, width-1);
-      curvePointY = constrain(y1+Math.random()*200-100, 0, height-1);
-      context.lineTo(curvePointX, curvePointY);
+    for (var i = 0; i < 4; i++) {
+      var xx1 = constrain(x1+Math.random()*1000-500, 0, width-1);
+      var yy1 = constrain(y1+Math.random()*200-100, 0, height-1);
+      curvePointX = constrain(xx1+Math.random()*1000-500, 0, width-1);
+      curvePointY = constrain(yy1+Math.random()*200-100, 0, height-1);
+      context.quadraticCurveTo(xx1, yy1, curvePointX, curvePointY);
     }
     context.stroke();
     x1 = curvePointX;
     y1 = curvePointY;
 
-    // second line
-    // pixelIndex = Math.floor(y2*imgW+x2);
+    // third line
+    // pixelIndex = Math.floor(y3*imgW+x3);
     // var r = imgData[pixelIndex*4+0];
     // var g = imgData[pixelIndex*4+1];
     // var b = imgData[pixelIndex*4+2];
-    // var hueValue = (r+g+b)/200;
-    // context.lineWidth = hueValue;
+    // var hueValue = r+g+b;
+    // context.lineWidth = hueValue/100;
+    // // context.lineWidth = 4;
     // context.strokeStyle = 'rgb('+r+','+g+','+b+')';
-    //
+    // context.globalAlpha = 1 - (hueValue/1000);
+    // context.globalAlpha = 1;
+
     // context.save();
     // context.beginPath();
-    // context.moveTo(x2, y2);
-    // for (var i = 0; i < 7; i++) {
-    //   curvePointX = constrain(x2+Math.random()*200-100, 0, width-1);
-    //   curvePointY = constrain(y2+Math.random()*200-100, 0, height-1);
+    // context.moveTo(x3, y3);
+    // for (var i = 0; i < 4; i++) {
+    //   curvePointX = constrain(x3+Math.random()*1000-500, 0, width-1);
+    //   curvePointY = constrain(y3+Math.random()*200-100, 0, height-1);
     //   context.lineTo(curvePointX, curvePointY);
     // }
     // context.stroke();
-    // x2 = curvePointX;
-    // y2 = curvePointY;
-
-    // third line
-    pixelIndex = Math.floor(y3*imgW+x3);
-    var r = imgData[pixelIndex*4+0];
-    var g = imgData[pixelIndex*4+1];
-    var b = imgData[pixelIndex*4+2];
-    var hueValue = (r+g+b)/200;
-    context.lineWidth = hueValue;
-    context.strokeStyle = 'rgb('+r+','+g+','+b+')';
-
-    context.save();
-    context.beginPath();
-    context.moveTo(x3, y3);
-    for (var i = 0; i < 7; i++) {
-      curvePointX = constrain(x3+Math.random()*200-100, 0, width-1);
-      curvePointY = constrain(y3+Math.random()*200-100, 0, height-1);
-      context.lineTo(curvePointX, curvePointY);
-    }
-    context.stroke();
-    x3 = curvePointX;
-    y3 = curvePointY;
+    // x3 = curvePointX;
+    // y3 = curvePointY;
 
     counter++;
     if (counter>=maxCounter) noLoop = true;
@@ -185,7 +175,7 @@ function constrain(val, min, max) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#666';
+    context.fillStyle = '#ffffff';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
