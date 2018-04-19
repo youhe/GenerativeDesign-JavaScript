@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>M_1_1_01</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+    <h1>M_1_1_01</h1>
+    <p class="operation">
+    <b>OPERATION</b><br>
+MOUSE<br>
+click: new random line<br>
+<br>
+KEYS<br>
+t: switch text display<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX,
+    mouseY,
+    random = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    var cnt = 0;
+    for (var i=0; i<=width; i+=20) {
+        random[cnt] = Math.random()*(height*0.5)+(height*0.25);
+        cnt++;
+    }
+
+    clearDisplay();
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    // line
+    context.strokeStyle = 'rgb(0,130,164)';
+    context.strokeWidth = 1;
+    context.beginPath();
+    for (var x=0; x<=width; x+=20) {
+        var y = random[x/20];
+        if (x == 0) context.moveTo(x,y);
+        else context.lineTo(x,y);
+    }
+    context.stroke();
+
+    // dots
+    context.fillStyle = 'rgb(0, 0, 0)';
+    for (var x=0; x<=width; x+=20) {
+      var y = random[x/20];
+      context.beginPath();
+      context.arc(x, y, 3, 0, Math.PI*2, false)
+      context.fill();
+    }
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+function lerp(a, b, c) {
+    return ((b - a) * c) + a;
+}
+
+function constrain(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+}
+
+function clearDisplay() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function toggleText() {
+    var textBox = document.getElementById('textBox');
+    var display = textBox.style.display;
+    if (display == 'none') textBox.style.display = 'block';
+    else textBox.style.display = 'none';
+}
+
+document.addEventListener('mousedown', (event) => {
+});
+
+document.addEventListener('mouseup', (event) => {
+});
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 'c') clearDisplay();
+    if (key == 't') toggleText();
+});
+
+document.onclick = function (e) {
+  var cnt = 0;
+  for (var i=0; i<=width; i+=20) {
+      random[cnt] = Math.random()*(height*0.5)+(height*0.25);
+      cnt++;
+  }
+  clearDisplay();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
