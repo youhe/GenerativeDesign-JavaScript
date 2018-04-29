@@ -8,16 +8,14 @@ var width = 800,
     mouseX,
     mouseY,
     frame = 0,
-    noiseMode = 1;
+    noiseMode = 2;
 
 var agents = [],
-    agentsCount = 3000,
-    noiseScale = 6,
+    agentsCount = 6000,
+    noiseScale = 10,
     noiseStrength = 0.08,
-    overlayAlpha = 2,
-    agentsAlpha = .04,
-    strokeWidth = 0.3,
-    drawMode = 1;
+    agentsAlpha = .02,
+    strokeWidth = 0.3;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -50,7 +48,7 @@ function draw() {
     requestAnimationFrame(function() { draw(); });
 
     frame++;
-    if (frame%2 != 0) return;
+    if (frame%10 != 0) return;
 
     // context.globalAlpha = 0.1;
     // context.drawImage(nCanvas,
@@ -58,20 +56,16 @@ function draw() {
     //   0, 0, width, height
     // );
 
+    context.globalCompositeOperation = 'source-over';
     context.fillStyle = '#fff';
     context.globalAlpha = agentsAlpha;
     context.fillRect(0, 0, width, height);
 
+    // context.globalCompositeOperation = 'lighter';
     context.strokeStyle = '#000';
-    context.globalAlpha = .3;
-    if (drawMode == 1) {
-        for(var i = 0; i < agentsCount; i++) {
-            agents[i].update1();
-        }
-    } else {
-        for(var i = 0; i < agentsCount; i++) {
-            agents[i].update2();
-        }
+    context.globalAlpha = .2;
+    for(var i = 0; i < agentsCount; i++) {
+        agents[i].update();
     }
 }
 
@@ -143,7 +137,7 @@ function constrain(val, min, max) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#fff';
+    context.fillStyle = '#000';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
