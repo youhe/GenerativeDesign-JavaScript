@@ -3,8 +3,8 @@ class Agent {
     this.p = {x: 0, y: 0};
     this.p.x = Math.floor(Math.random() * width);
     this.p.y = Math.floor(Math.random() * height);
-    this.p.x = width / 2;
-    this.p.y = height / 2;
+    // this.p.x = width / 2;
+    // this.p.y = height / 2;
 
     this.pOld = {x: this.p.x, y: this.p.y};
     this.stepSize = Math.floor(Math.random() * 6) + 2;
@@ -21,7 +21,7 @@ class Agent {
       1, 1
     ).data;
     this.angle = data[0];
-    this.angle *= this.noiseStrength;
+    this.angle *= noiseStrength;
 
     this.p.x += Math.cos(this.angle) * this.stepSize;
     this.p.y += Math.sin(this.angle) * this.stepSize;
@@ -35,10 +35,10 @@ class Agent {
     if (this.life <= 0) this.isOutside = true;
 
     if (this.isOutside) {
-      // this.p.x = Math.floor(Math.random() * width);
-      // this.p.y = Math.floor(Math.random() * height);
-      this.p.x = width / 2;
-      this.p.y = height / 2;
+      this.p.x = Math.floor(Math.random() * width);
+      this.p.y = Math.floor(Math.random() * height);
+      // this.p.x = width / 2;
+      // this.p.y = height / 2;
       this.pOld.x = this.p.x;
       this.pOld.y = this.p.y;
       this.life = Math.floor(Math.random() * 400);

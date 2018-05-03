@@ -8,10 +8,10 @@ var width = 800,
     mouseX,
     mouseY,
     frame = 0,
-    noiseMode = 2;
+    noiseMode = 1;
 
 var agents = [],
-    agentsCount = 6000,
+    agentsCount = 3000,
     noiseScale = 10,
     noiseStrength = 0.08,
     agentsAlpha = .02,
