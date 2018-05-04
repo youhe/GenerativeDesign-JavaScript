@@ -1,21 +1,51 @@
-var N;
 var width = 800,
     height = 800,
     canvas,
     context,
-    nCanvas,
-    nContext,
     mouseX,
     mouseY,
-    frame = 0,
-    noiseMode = 1;
+    frame = 0;
 
+// canvas
+var canvasColor = '#002503',
+    canvasAlpha = 0.05;
+
+// noise
+var N,
+    nCanvas,
+    nContext,
+    noiseMode = 1;
+    noiseScale = 10,
+    noiseStrength = 0.06;
+
+// Agent
 var agents = [],
     agentsCount = 3000,
-    noiseScale = 10,
-    noiseStrength = 0.08,
-    agentsAlpha = .02,
-    strokeWidth = 0.3;
+    agentsColor = '#412',
+    agentComp = 'lighter',
+    agentsAlpha = .3,
+    strokeWidth = 0.7;
+
+// dat gui
+var guiCanvas, guiNoise, guiAgent;
+var GuiCanvas = function() {
+  this.color = canvasColor;
+  this.alpha = canvasAlpha;
+}
+
+var GuiNoise = function() {
+  this.mode = noiseMode;
+  this.scale = noiseScale;
+  this.strength = noiseStrength;
+}
+
+var GuiAgent = function() {
+  this.count = agentsCount;
+  this.color = agentsColor;
+  this.comp = agentComp;
+  this.alpha = agentsAlpha;
+  this.width = strokeWidth;
+}
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -30,46 +60,84 @@ function setUp() {
     nContext.canvas.width = width;
     nContext.canvas.height = height;
 
-    mouseX = width;
-    mouseY = height;
+    mouseX = width / 2;
+    mouseY = height / 2;
 
-    for(var i=0; i<agentsCount; i++) {
+    for(var i=0; i<10000; i++) {
       agents[i] = new Agent();
     }
 
-    context.fillStyle = '#fff';
-    context.globalAlpha = 1;
-    context.fillRect(0, 0, width, height);
+    var gui = new dat.GUI();
 
-    setnCanvas();
+    guiCanvas = new GuiCanvas();
+    var guiFcanvas = gui.addFolder('canvas');
+    guiFcanvas.open();
+    guiFcanvas.addColor(guiCanvas, 'color').onChange(setVal);
+    guiFcanvas.add(guiCanvas, 'alpha', 0, 1).step(0.01).onChange(setVal);
+
+    guiNoise = new GuiNoise();
+    var guiFnoise = gui.addFolder('noise');
+    guiFnoise.open();
+    guiFnoise.add(guiNoise, 'mode', 0, 1).step(1).onChange(setVal);
+    guiFnoise.add(guiNoise, 'scale', 1, 20).step(1).onChange(setVal);
+    guiFnoise.add(guiNoise, 'strength', 0, 1).step(0.01).onChange(setVal);
+
+    guiAgent = new GuiAgent();
+    var guiFagent = gui.addFolder('agent');
+    guiFagent.open();
+    guiFagent.add(guiAgent, 'count', 0, 10000).step(1).onChange(setVal);
+    guiFagent.addColor(guiAgent, 'color').onChange(setVal);
+
+    guiFagent.add(guiAgent, 'comp', ['lighter', 'source-over']).onChange(setVal);
+    guiFagent.add(guiAgent, 'alpha', 0, 1).step(0.1).onChange(setVal);
+    guiFagent.add(guiAgent, 'width', 0.1, 100).step(0.1).onChange(setVal);
+
+    clearDisplay();
+    toggleText();
+    setNCanvas();
+}
+
+function setVal() {
+  canvasColor = guiCanvas.color;
+  canvasAlpha = guiCanvas.alpha;
+
+  noiseMode = guiNoise.mode;
+  noiseScale = guiNoise.scale;
+  noiseStrength = guiNoise.strength;
+
+  agentsCount = guiAgent.count;
+  agentsColor = guiAgent.color;
+  agentComp = guiAgent.comp;
+  agentsAlpha = guiAgent.alpha;
+  strokeWidth = guiAgent.width;
 }
 
 function draw() {
     requestAnimationFrame(function() { draw(); });
 
     frame++;
-    if (frame%10 != 0) return;
-
-    // context.globalAlpha = 0.1;
-    // context.drawImage(nCanvas,
-    //   0, 0, width/noiseScale, height/noiseScale,
-    //   0, 0, width, height
-    // );
+    if (frame%3 != 0) return;
 
     context.globalCompositeOperation = 'source-over';
-    context.fillStyle = '#fff';
-    context.globalAlpha = agentsAlpha;
+    context.fillStyle = canvasColor;
+    context.globalAlpha = canvasAlpha;
     context.fillRect(0, 0, width, height);
 
-    // context.globalCompositeOperation = 'lighter';
-    context.strokeStyle = '#000';
-    context.globalAlpha = .2;
+    context.globalCompositeOperation = agentComp;
+    context.strokeStyle = agentsColor;
+    context.globalAlpha = agentsAlpha;
     for(var i = 0; i < agentsCount; i++) {
         agents[i].update();
     }
 }
 
-function setnCanvas() {
+function clearDisplay() {
+    context.fillStyle = '#000';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function setNCanvas() {
     N = new noiseX(
       4,
       2,
@@ -97,51 +165,6 @@ function setnCanvas() {
     if (frame == 0) draw();
 }
 
-function hsvToRgb(h, s, v) {
-    h /= 360; s /= 100; v /= 100;
-    var r, g, b, i, f, p, q, t;
-    i = Math.floor(h * 6);
-    f = h * 6 - i;
-    p = v * (1 - s);
-    q = v * (1 - f * s);
-    t = v * (1 - (1 - f) * s);
-    switch (i % 6) {
-        case 0: r = v, g = t, b = p; break;
-        case 1: r = q, g = v, b = p; break;
-        case 2: r = p, g = v, b = t; break;
-        case 3: r = p, g = q, b = v; break;
-        case 4: r = t, g = p, b = v; break;
-        case 5: r = v, g = p, b = q; break;
-    }
-    return {
-        r: Math.round(r * 255),
-        g: Math.round(g * 255),
-        b: Math.round(b * 255)
-    };
-}
-
-function map(val, s1, e1, s2, e2) {
-    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
-}
-
-function dist(x1, y1, x2, y2) {
-    return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
-}
-
-function lerp(a, b, c) {
-    return ((b - a) * c) + a;
-}
-
-function constrain(val, min, max) {
-    return Math.min(Math.max(val, min), max);
-}
-
-function clearDisplay() {
-    context.fillStyle = '#000';
-    context.globalAlpha = 1;
-    context.fillRect(0, 0, width, height);
-}
-
 function toggleText() {
     var textBox = document.getElementById('textBox');
     var display = textBox.style.display;
@@ -159,12 +182,12 @@ document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == 'c') clearDisplay();
     if (key == 't') toggleText();
-    if (key == '1') {noiseMode = 1;setnCanvas()}
-    if (key == '2') {noiseMode = 2;setnCanvas()}
+    if (key == '1') {noiseMode = 1;setNCanvas()}
+    if (key == '2') {noiseMode = 2;setNCanvas()}
 });
 
 document.onclick = function (e) {
-    setnCanvas();
+    // setNCanvas();
 };
 
 document.onmousemove = function (e) {
