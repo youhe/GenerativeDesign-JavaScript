@@ -22,32 +22,46 @@ class Agent {
     this.angle = nData[0];
     this.angle *= noiseStrength;
 
-    this.p.x += Math.cos(this.angle) * this.stepSize;
-    this.p.y += Math.sin(this.angle) * this.stepSize;
+    this.p.x += Math.cos(this.angle) * this.stepSize * agentSpeed;
+    this.p.y += Math.sin(this.angle) * this.stepSize * agentSpeed;
 
-    var cFrame = 10;
-    if(this.p.x < -cFrame) this.isOutside = true;
-    else if(this.p.x > width + cFrame) this.isOutside = true;
-    else if(this.p.y < cFrame) this.isOutside = true;
-    else if(this.p.y > height + cFrame) this.isOutside = true;
+    if(this.p.x < canvasFrame) this.isOutside = true;
+    else if(this.p.x > width - canvasFrame) this.isOutside = true;
+    else if(this.p.y < canvasFrame) this.isOutside = true;
+    else if(this.p.y > height - canvasFrame) this.isOutside = true;
 
     if (this.isOutside) {
-      this.p.x = Math.floor(Math.random() * width);
-      this.p.y = Math.floor(Math.random() * height);
+      this.p.x = Math.floor(Math.random() * (width - (canvasFrame*2))) + canvasFrame;
+      this.p.y = Math.floor(Math.random() * (height - (canvasFrame*2))) + canvasFrame;
       this.pOld.x = this.p.x;
       this.pOld.y = this.p.y;
       this.life = Math.floor(Math.random() * 400);
       this.life = 1000;
     }
 
-    context.strokeStyle = this.color;
+    if (agentColorRandom) context.strokeStyle = this.color;
     // var d = map(this.p.x + this.p.y, 0, 1600, 60, 0);
     // context.lineWidth = strokeWidth + d;
-    context.lineWidth = strokeWidth;
-    context.beginPath();
-    context.moveTo(this.pOld.x, this.pOld.y);
-    context.lineTo(this.p.x, this.p.y);
-    context.stroke();
+
+    context.lineWidth = agentLineWidth;
+
+    if (agentShape == 'line') {
+      context.beginPath();
+      context.moveTo(this.pOld.x, this.pOld.y);
+      context.lineTo(this.p.x, this.p.y);
+      context.stroke();
+    } else if (agentShape == 'rect') {
+      var s = 20 * agentSize;
+      context.beginPath();
+      context.rect(this.p.x - (s/2), this.p.y - (s/2), s, s);
+      context.stroke();
+    } else if (agentShape == 'arc') {
+      // var m = map(this.p.y, 0, 800, 10, 1);
+      var s = 10 * agentSize;
+      context.beginPath();
+      context.arc(this.p.x, this.p.y, s, 0, Math.PI*2, false);
+      context.stroke();
+    }
 
     this.pOld.x = this.p.x;
     this.pOld.y = this.p.y;
