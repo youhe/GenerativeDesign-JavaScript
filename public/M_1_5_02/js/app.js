@@ -45,11 +45,11 @@ var comps = [
 var agents = [],
     agentShape = 'line',
     agentSize = 1,
-    agentLineWidth = .3,
+    agentLineWidth = 2.0,
     agentCount = 3000,
     agentColorRandom = true,
     agentColor = '#b35555',
-    agentComp = comps[0],
+    agentComp = comps[2],
     agentAlpha = .6,
     agentSpeed = 1;
 
