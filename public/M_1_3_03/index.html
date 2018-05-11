@@ -34,7 +34,7 @@ var width = 800,
     mouseX,
     mouseY,
     frame = 0,
-    noiseMode = 1,
+    noiseMode = 2,
     nCanvas,
     nContext;
 
@@ -90,7 +90,7 @@ function setCanvas() {
                 nV = Math.floor(nV);
             }
             if (noiseMode == 2) {
-                var n = N.noise(x, y) * 24;
+                var n = N.noise(x, y) * 20;
                 nV = (n - Math.floor(n)) * 255;
                 nV = Math.floor(nV);
             }
