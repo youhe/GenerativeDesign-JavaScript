@@ -8,7 +8,7 @@ class Agent {
     this.stepSize = Math.floor(Math.random() * 6) + 2;
     this.angle;
     this.isOutside = false;
-    var c = hsvToRgb(Math.floor(Math.random() * 360), 100, 100);
+    var c = hsvToRgb('rgb', Math.floor(Math.random() * 360), 100, 100);
     this.color = 'rgb('+c.r+','+c.g+','+c.b+')';
     this.noiseStrength = Math.floor(Math.random() * 10) * 0.01 + 0.01;
   }

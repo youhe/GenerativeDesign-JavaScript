@@ -174,19 +174,19 @@ function draw() {
 
   // context.drawImage(nCanvas, 0, 0, width * noiseScale, height * noiseScale);
 
-  context.globalCompositeOperation = 'source-over';
-  context.fillStyle = canvasColor;
-  context.globalAlpha = canvasAlpha;
-  context.fillRect(0, 0, width, height);
-
   // context.globalCompositeOperation = 'source-over';
-  // var grad  = context.createLinearGradient(0,0, 0,height);
-  // grad.addColorStop(0,'#012676');
-  // grad.addColorStop(.3,'#012676');
-  // grad.addColorStop(1,'#39A0F9');
-  // context.fillStyle = grad;
+  // context.fillStyle = canvasColor;
   // context.globalAlpha = canvasAlpha;
   // context.fillRect(0, 0, width, height);
+
+  context.globalCompositeOperation = 'source-over';
+  var grad  = context.createLinearGradient(0,0, 0,height);
+  grad.addColorStop(0,'#012676');
+  grad.addColorStop(.3,'#012676');
+  grad.addColorStop(1,'#39A0F9');
+  context.fillStyle = grad;
+  context.globalAlpha = canvasAlpha;
+  context.fillRect(0, 0, width, height);
 
   context.globalCompositeOperation = agentComp;
   context.strokeStyle = agentColor;
