@@ -252,10 +252,10 @@ class Agent06 {
   }
 
   draw() {
-    this.vf += random(-0.5, 0.5);
+    this.vf += random(-2, 2);
     this.vf *= 0.9;
     this.v += this.vf;
-    this.v *= 0.95;
+    this.v *= 0.98;
     this.rvf += random(-0.02, 0.02);
     this.rvf *= 0.95;
     this.rv += this.rvf;
@@ -268,8 +268,10 @@ class Agent06 {
 
     this.constrain();
 
+    var r = Math.abs(this.v * 12);
+    context.lineWidth = r / 20;
     context.beginPath();
-    context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.arc(this.x, this.y, r, 0, Math.PI * 2, false);
     context.stroke();
   }
 

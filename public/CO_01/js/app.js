@@ -7,7 +7,7 @@ var width = 800,
   frame = 0;
 
 var agentId = '06',
-  agentCnt = 100,
+  agentCnt = 1,
   agents = [],
   guiAgent;
 var GuiAgent = function() {
@@ -37,16 +37,17 @@ function setUp() {
 
 function draw() {
   requestAnimationFrame(function() { draw(); });
+  frame++;
 
-  clearDisplay();
+  if (frame % 3 != 0) return; 
+  // clearDisplay();
 
-  context.fillStyle = '#000';
-  context.globalAlpha = 1;
+  context.strokeStyle = '#000';
+  context.globalAlpha = .2;
   for(var i = 0; i < agentCnt; i++) {
-    agents[i].draw();
+    // agents[i].draw();
   }
 
-  frame++;
 }
 
 function setVal() {
@@ -96,7 +97,7 @@ function setVal() {
 
 function clearDisplay() {
   context.fillStyle = '#fff';
-  context.globalAlpha = .06;
+  context.globalAlpha = 1;
   context.fillRect(0, 0, width, height);
 }
 
