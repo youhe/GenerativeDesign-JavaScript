@@ -6,11 +6,13 @@ var width = 800,
   mouseY,
   frame = 0;
 
-var agentId = '06',
-  agentCnt = 100,
+var agentId = '08',
+  agentColor = 'black',
+  agentCnt = 20,
   agents = [],
   guiAgent;
 var GuiAgent = function() {
+  this.color = agentColor;
   this.id = agentId;
 }
 
@@ -27,29 +29,43 @@ function setUp() {
 
   var gui = new dat.GUI();
   guiAgent = new GuiAgent();
-  var guiId = ['00','01','02','03','04','05','06','07','08','09'];
+  var guiId = [
+    '00','01','02','03','04','05','06','07','08','09',
+  ];
+  gui.add(guiAgent, 'color', ['white', 'block']).onChange(setVal);
   gui.add(guiAgent, 'id', guiId).onChange(setVal);
 
   setVal();
-  clearDisplay();
   draw();
 }
 
 function draw() {
   requestAnimationFrame(function() { draw(); });
+  frame++;
 
-  clearDisplay();
+  if (frame % 2 != 0) return;
 
-  context.fillStyle = '#000';
-  context.globalAlpha = 1;
+  // if (agentColor == 'white') context.fillStyle = '#000';
+  // else context.fillStyle = '#fff';
+  // context.globalAlpha = .08;
+  // context.fillRect(0, 0, width, height);
+
+  if (agentColor == 'white') context.strokeStyle = '#fff';
+  else context.strokeStyle = '#060';
+  context.globalAlpha = .7;
   for(var i = 0; i < agentCnt; i++) {
     agents[i].draw();
   }
 
-  frame++;
 }
 
 function setVal() {
+  agentColor = guiAgent.color;
+  if (agentColor == 'white') context.fillStyle = '#000';
+  else context.fillStyle = '#fff';
+  context.globalAlpha = 1;
+  context.fillRect(0, 0, width, height);
+
   switch (guiAgent.id) {
     case '00': {
       for(var i = 0; i < agentCnt; i++) agents[i] = new Agent00();
@@ -92,12 +108,6 @@ function setVal() {
       break;
     }
   }
-}
-
-function clearDisplay() {
-  context.fillStyle = '#fff';
-  context.globalAlpha = .06;
-  context.fillRect(0, 0, width, height);
 }
 
 function toggleText() {

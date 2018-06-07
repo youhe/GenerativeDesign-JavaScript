@@ -5,8 +5,8 @@ class Agent00 {
   }
 
   draw() {
-    this.x += random(-5, 5);
-    this.y += random(-5, 5);
+    this.x += random(-10, 10);
+    this.y += random(-10, 10);
 
     this.x = constrain(this.x, 0, width);
     this.y = constrain(this.y, 0, width);
@@ -23,7 +23,7 @@ class Agent01 {
     this.y = random(0, height);
     this.vx = 0;
     this.vy = 0;
-    this.friction = 0.95;
+    this.friction = 0.97;
   }
 
   draw() {
@@ -259,7 +259,7 @@ class Agent06 {
     this.rvf += random(-0.02, 0.02);
     this.rvf *= 0.95;
     this.rv += this.rvf;
-    this.rv*=0.95;
+    this.rv *= 0.95;
     this.r += this.rv;
     var vx = Math.cos(this.r) * this.v;
     var vy = Math.sin(this.r) * this.v;
@@ -291,3 +291,359 @@ class Agent06 {
   }
 }
 
+class Agent07 {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.v = 0;
+  	this.vf = 0;
+  	this.r = 0;
+  	this.rv = 0;
+  	this.rvf = 0;
+  	this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    this.vf += random(-3, 3);
+  	this.vf *= 0.9;
+  	this.v += this.vf;
+  	this.v *= 0.95;
+  	this.rvf += random(-0.01, 0.01);
+  	this.rvf *= 0.95;
+  	this.rv += this.rvf;
+  	this.rv *= 0.95;
+  	this.r += this.rv;
+  	var vx = Math.cos(this.r) * this.v;
+  	var vy = Math.sin(this.r) * this.v;
+  	this.x += vx;
+  	this.y += vy;
+
+    this.constrain();
+
+    context.beginPath();
+    // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.moveTo(this.oX, this.oY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
+
+class Agent08 {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.v = 0;
+  	this.vf = 0;
+  	this.r = 0;
+  	this.rv = 0;
+  	this.rvf = 0;
+  	this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    this.vf += random(-0.07, 0.07);
+  	this.vf *= 0.99;
+  	this.v += this.vf;
+  	this.v *= 0.95;
+  	this.rvf += random(-0.001, 0.001);
+  	this.rvf *= 0.99;
+  	this.rv += this.rvf;
+  	this.rv*=0.95;
+  	this.r += this.rv;
+  	var vx = Math.cos(this.r) * this.v;
+  	var vy = Math.sin(this.r) * this.v;
+  	this.x += vx;
+  	this.y += vy;
+
+    this.constrain();
+
+    context.lineWidth = this.vf * 12 + 1;
+    context.beginPath();
+    // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.moveTo(this.oX, this.oY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
+
+class Agent09 {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.v = 0;
+  	this.vf = 0;
+  	this.r = 0;
+  	this.rv = 0;
+  	this.rvf = 0;
+  	this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    if(random(0, 1) < 0.1){
+  		this.vf += random(-0.5, 0.5);
+  	}
+  	this.v += this.vf;
+  	this.v *= 0.95;
+  	this.rvf += random(-0.1, 0.1);
+  	this.rvf *= 0.99;
+  	this.rv += this.rvf;
+  	this.rv *= 0.95;
+  	this.r += this.rv;
+  	var vx = Math.cos(this.r) * this.v;
+  	var vy = Math.sin(this.r) * this.v;
+  	this.x += vx;
+  	this.y += vy;
+
+    this.constrain();
+
+    // context.lineWidth = this.vf * 3 + 1;
+    context.beginPath();
+    // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.moveTo(this.oX, this.oY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
+
+class Agent10 {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.v = 0;
+  	this.vf = 0;
+  	this.r = 0;
+  	this.rv = 0;
+  	this.rvf = 0;
+  	this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    if(random(0, 1) < 0.1){
+  		this.vf = random(-0.5, 0.5) * 2;
+  		this.rvf = random(-0.01, 0.01);
+  	}
+  	this.v += this.vf;
+  	this.v *= 0.95;
+  	this.rv += this.rvf;
+  	this.rv*=0.95;
+  	this.r += this.rv;
+  	var vx = Math.cos(this.r) * this.v;
+  	var vy = Math.sin(this.r) * this.v;
+  	this.x += vx;
+  	this.y += vy;
+
+    this.constrain();
+
+    context.beginPath();
+    // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.moveTo(this.oX, this.oY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
+
+class Agent11 {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.radr = 0;
+  	this.radv = 0;
+  	this.v = 0;
+  	this.vf = 0;
+  	this.r = 0;
+  	this.rv = 0;
+  	this.rvf = 0;
+  	this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    this.radr += random(-0.1, 0.1);
+  	this.rv = Math.cos(this.radr) * 100;
+  	this.r += this.rv;
+
+  	this.radv += random(-0.1, 0.1);
+  	this.v = Math.cos(this.radv) * 16;
+
+  	var vx = Math.cos(this.r) * this.v;
+  	var vy = Math.sin(this.r) * this.v;
+  	this.x += vx;
+  	this.y += vy;
+
+    this.constrain();
+
+    context.beginPath();
+    // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.moveTo(this.oX, this.oY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
+
+class Agent12 {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.radr = 0;
+  	this.radv = 0;
+  	this.v = 0;
+  	this.vf = 0;
+  	this.r = 0;
+  	this.rv = 0;
+  	this.rvf = 0;
+  	this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    this.radr += random(-0.2, 0.2);
+  	this.rv = Math.sin(this.radr)*0.2;
+  	this.r += this.rv;
+
+  	this.radv += random(0, 0.1);
+  	this.v = Math.sin(this.radv) * 5;
+
+  	var vx = Math.cos(this.r) * this.v;
+  	var vy = Math.sin(this.r) * this.v;
+  	this.x += vx;
+  	this.y += vy;
+
+    this.constrain();
+
+    context.beginPath();
+    // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.moveTo(this.oX, this.oY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
