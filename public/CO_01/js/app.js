@@ -45,7 +45,7 @@ function draw() {
   context.strokeStyle = '#000';
   context.globalAlpha = .2;
   for(var i = 0; i < agentCnt; i++) {
-    // agents[i].draw();
+    agents[i].draw();
   }
 
 }
