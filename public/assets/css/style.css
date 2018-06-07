@@ -10,10 +10,27 @@ h1 {
   font-size: 24px;
   user-select: none;
 }
+
 .operation {
   position: absolute;
   left: 20px;
   top: 60px;
+  padding: 0 0 5px;
   font-size: 14px;
   user-select: none;
 }
+
+.operation b {
+  font-size: 16px;
+  line-height: 2;
+}
+
+.operation a {
+  color: #06a;
+}
+
+.operation a {
+  text-decoration: none;
+  opacity: .6;
+}
+
