@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>-</title>
+<link rel="stylesheet" href="css/style.css">
+
+<!-- proteras -->
+<script type="x-shader/x-vertex" id="vs">
+uniform vec4 baseColor;
+
+varying vec3 vNormal;
+varying vec4 vDistColor;
+
+const float fogStart = 0.0;
+const float fogEnd = 300.0;
+const vec4 fogColor = vec4(0.0, 0.0, 0.0, 0.4);
+
+void main() {
+  vec3 pos = position;
+  vNormal = normal;
+  float distance = distance(pos, vec3(0.0, 0.0, 0.0));
+  float fog = clamp((distance-fogStart)/(fogEnd-fogStart), 0.0, 1.0);
+  // vDistColor = baseColor*((pos.z+40.0)*0.01);
+  vDistColor = baseColor;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+}
+</script>
+<script type="x-shader/fragment" id="fs">
+precision mediump float;
+
+uniform vec3 lightDirection;
+
+varying vec3 vNormal;
+varying vec4 vDistColor;
+
+void main() {
+  float diffuse = clamp(dot(vNormal, normalize(lightDirection)), 0.1, 1.0);
+  float shade = 1.0;
+  if (diffuse < 0.1) shade = 0.5;
+  else if (diffuse < 0.3) shade = 0.7;
+  else if (diffuse < 0.7) shade = 0.9;
+  gl_FragColor = vDistColor*vec4(shade, shade, shade, 1.0);
+}
+</script>
+
+<!-- contents -->
+<script type="x-shader/x-vertex" id="vs-con">
+attribute vec3 fstPos;
+attribute vec4 color;
+
+uniform vec4 baseColor;
+uniform float animation;
+
+varying vec3 vNormal;
+varying vec4 vDistColor;
+
+void main() {
+  vDistColor = mix(baseColor, color, animation);
+  vNormal = normal;
+
+  vec3 pos = mix(position, fstPos, animation);
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+}
+</script>
+<script type="x-shader/fragment" id="fs-con">
+precision mediump float;
+
+uniform vec3 lightDirection;
+
+varying vec3 vNormal;
+varying vec4 vDistColor;
+
+void main() {
+  float diffuse = clamp(dot(vNormal, normalize(lightDirection)), 0.1, 1.0);
+  float shade = 1.0;
+  if (diffuse < 0.1) shade = 0.5;
+  else if (diffuse < 0.3) shade = 0.7;
+  else if (diffuse < 0.7) shade = 0.9;
+  gl_FragColor = vDistColor*vec4(shade, shade, shade, 1.0);
+}
+</script>
+
+<script src="../assets/js/arithmeticXYZ.js"></script>
+<script src="../assets/js/three.min.js"></script>
+<script src="../assets/js/OrbitControls.js"></script>
+<script src="../assets/js/dat.gui.min.js"></script>
+<script src="../assets/js/tweenmax-1.19.1.min.js"></script>
+<script src="js/app.js"></script>
+</head>
+<body>
+  <div id="cover"></div>
+</body>
+</html>
