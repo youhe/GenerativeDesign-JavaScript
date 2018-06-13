@@ -16,13 +16,17 @@ class Agent {
   draw(f) {
     f = f + this.f;
     var r = this.r * Math.cos(f * 0.01 * this.rX);
-    this.x = Math.cos(f * 0.03) * r;
-    this.y = Math.sin(f * 0.03) * r;
+    this.x = Math.cos(f * 0.05) * r;
+    this.y = Math.sin(f * 0.05) * r;
 
     this.x += width / 2;
     this.y += height / 2;
 
     if (this.oldX != 0) {
+      if (this.x < 0) return;
+      if (this.y < 0) return;
+      if (width < this.x) return;
+      if (height < this.y) return;
       var pixelIndex = Math.floor(this.x) + (Math.floor(this.y)*imgW);
       var r = imgData[pixelIndex*4+0];
       var g = imgData[pixelIndex*4+1];
@@ -30,7 +34,7 @@ class Agent {
 
       context.beginPath();
       context.strokeStyle = 'rgb('+r+','+g+','+b+')';
-      context.lineWidth = 1;
+      context.lineWidth = 2;
       // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
       context.moveTo(this.oldX, this.oldY);
       context.lineTo(this.x, this.y);

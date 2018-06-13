@@ -6,7 +6,7 @@ var width = 800,
   mouseY,
   imgW = 800,
   imgH = 800,
-  imgSrc = 'data/i3.jpg',
+  imgSrc = 'data/k.png',
   imgData = [],
   frame = 0;
 
@@ -37,6 +37,7 @@ function setUp() {
     agents[i] = new Agent();
 
   // setVal();
+  toggleText();
   getImgData();
   clearDisplay();
 }
