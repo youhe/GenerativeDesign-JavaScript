@@ -11,10 +11,6 @@ var agentId = '08',
   agentCnt = 20,
   agents = [],
   guiAgent;
-var GuiAgent = function() {
-  this.color = agentColor;
-  this.id = agentId;
-}
 
 function setUp() {
   canvas = document.createElement('canvas');
@@ -27,15 +23,11 @@ function setUp() {
   mouseX = width / 2;
   mouseY = height / 2;
 
-  var gui = new dat.GUI();
-  guiAgent = new GuiAgent();
-  var guiId = [
-    '00','01','02','03','04','05','06','07','08','09',
-  ];
-  gui.add(guiAgent, 'color', ['white', 'block']).onChange(setVal);
-  gui.add(guiAgent, 'id', guiId).onChange(setVal);
-
-  setVal();
+  context.fillStyle = '#fff';
+  context.globalAlpha = 1;
+  context.fillRect(0, 0, width, height);
+  for(var i = 0; i < agentCnt; i++) agents[i] = new Agent08();
+  toggleText();
   draw();
 }
 
@@ -57,57 +49,6 @@ function draw() {
     agents[i].draw();
   }
 
-}
-
-function setVal() {
-  agentColor = guiAgent.color;
-  if (agentColor == 'white') context.fillStyle = '#000';
-  else context.fillStyle = '#fff';
-  context.globalAlpha = 1;
-  context.fillRect(0, 0, width, height);
-
-  switch (guiAgent.id) {
-    case '00': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent00();
-      break;
-    }
-    case '01': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent01();
-      break;
-    }
-    case '02': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent02();
-      break;
-    }
-    case '03': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent03();
-      break;
-    }
-    case '04': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent04();
-      break;
-    }
-    case '05': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent05();
-      break;
-    }
-    case '06': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent06();
-      break;
-    }
-    case '07': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent07();
-      break;
-    }
-    case '08': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent08();
-      break;
-    }
-    case '09': {
-      for(var i = 0; i < agentCnt; i++) agents[i] = new Agent09();
-      break;
-    }
-  }
 }
 
 function toggleText() {

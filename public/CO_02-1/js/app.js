@@ -6,7 +6,7 @@ var width = 800,
   mouseY,
   imgW = 800,
   imgH = 800,
-  imgSrc = 'data/k.png',
+  imgSrc = 'data/i6.jpg',
   imgData = [],
   frame = 0;
 

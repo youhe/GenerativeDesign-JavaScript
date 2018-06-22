@@ -7,9 +7,9 @@ var width = 800,
     frame = 0;
 
 // canvas
-var canvasColor = '#000',
+var canvasColor = '#721d2c',
     canvasAlpha = 0.08,
-    canvasFrame = 10;
+    canvasFrame = 40;
 
 // noise
 var N,
@@ -19,7 +19,7 @@ var N,
     noisePer = 0.5,
     nCanvas,
     nContext,
-    noiseScale = 10,
+    noiseScale = 1,
     noiseStrength = 0.04;
 
 // Agent
@@ -45,12 +45,12 @@ var comps = [
 var agents = [],
     agentShape = 'line',
     agentSize = 1,
-    agentLineWidth = 2.0,
+    agentLineWidth = .5,
     agentCount = 3000,
-    agentColorRandom = true,
-    agentColor = '#b35555',
-    agentComp = comps[2],
-    agentAlpha = .6,
+    agentColorRandom = false,
+    agentColor = '#ecff65',
+    agentComp = comps[0],
+    agentAlpha = 1,
     agentSpeed = 1;
 
 // dat gui
@@ -172,21 +172,24 @@ function draw() {
   frame++;
   if (frame%3 != 0) return;
 
+  if (7 * 60 < frame) noiseScale += .1;
+  if (14 * 60 < frame) agentSpeed += .04;
+
   // context.drawImage(nCanvas, 0, 0, width * noiseScale, height * noiseScale);
 
-  // context.globalCompositeOperation = 'source-over';
-  // context.fillStyle = canvasColor;
-  // context.globalAlpha = canvasAlpha;
-  // context.fillRect(0, 0, width, height);
-
   context.globalCompositeOperation = 'source-over';
-  var grad  = context.createLinearGradient(0,0, 0,height);
-  grad.addColorStop(0,'#012676');
-  grad.addColorStop(.3,'#012676');
-  grad.addColorStop(1,'#39A0F9');
-  context.fillStyle = grad;
+  context.fillStyle = canvasColor;
   context.globalAlpha = canvasAlpha;
   context.fillRect(0, 0, width, height);
+
+  // context.globalCompositeOperation = 'source-over';
+  // var grad  = context.createLinearGradient(0,0, 0,height);
+  // grad.addColorStop(0,'#012676');
+  // grad.addColorStop(.3,'#012676');
+  // grad.addColorStop(1,'#39A0F9');
+  // context.fillStyle = grad;
+  // context.globalAlpha = canvasAlpha;
+  // context.fillRect(0, 0, width, height);
 
   context.globalCompositeOperation = agentComp;
   context.strokeStyle = agentColor;

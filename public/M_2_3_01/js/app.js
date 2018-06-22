@@ -12,7 +12,7 @@ var canvasColor = '#000',
 
 // Agent
 var agents = [],
-    agentsCnt = 10;
+    agentsCnt = 3;
 
 // dat gui
 var guiCanvas, guiNoise, guiAgent;
@@ -45,6 +45,8 @@ function setUp() {
   // guiFcanvas.add(guiCanvas, 'alpha', 0, 1).step(0.01).onChange(setVal);
   // guiFcanvas.add(guiCanvas, 'frame', -10, 100).step(1).onChange(setVal);
 
+  draw();
+  draw();
   draw();
 }
 

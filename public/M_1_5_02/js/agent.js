@@ -22,6 +22,7 @@ class Agent {
     this.angle = nData[0];
     this.angle *= noiseStrength;
 
+
     this.p.x += Math.cos(this.angle) * this.stepSize * agentSpeed;
     this.p.y += Math.sin(this.angle) * this.stepSize * agentSpeed;
 
