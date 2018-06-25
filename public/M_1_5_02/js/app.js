@@ -172,9 +172,6 @@ function draw() {
   frame++;
   if (frame%3 != 0) return;
 
-  if (7 * 60 < frame) noiseScale += .1;
-  if (14 * 60 < frame) agentSpeed += .04;
-
   // context.drawImage(nCanvas, 0, 0, width * noiseScale, height * noiseScale);
 
   context.globalCompositeOperation = 'source-over';

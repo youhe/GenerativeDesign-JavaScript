@@ -1,7 +1,11 @@
 html, body {
   margin: 0; padding: 0;
-  background: #000;
+  background: #333;
 }
+body.col-w {
+  color: #fff;
+}
+
 h1 {
   position: absolute;
   left: 20px; top: 20px;
@@ -29,8 +33,7 @@ h1 {
   color: #06a;
 }
 
-.operation a {
+.operation a:hover {
   text-decoration: none;
   opacity: .6;
 }
-

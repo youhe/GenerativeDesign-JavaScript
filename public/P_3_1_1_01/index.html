@@ -78,9 +78,9 @@ function draw() {
             y += spacing; 
         }
 
-        context.fillStyle = '#000';
+        context.strokeStyle = '#fffa';
         context.globalAlpha = .7;
-        context.fillText(letter, x, y);
+        context.strokeText(letter, x, y);
         x += letterWidth;
     }
 
@@ -130,7 +130,7 @@ function lerp(a, b, c) {
 }
 
 function clearDisplay() {
-    context.fillStyle = '#fff';
+    context.fillStyle = '#144433';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
