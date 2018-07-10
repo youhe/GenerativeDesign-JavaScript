@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CO_01 - 2</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div id="textBox">
+  <h1>CO_01 - 2</h1>
+  <p class="operation">
+  <b>DESCRIPTION</b><br>
+    <a target="_blank" href="https://cocopon.me/blog/series/interactive-coding/">インタラクティブコーディング勉強会</a><br>
+第 1 回を参考に実装。<br>
+    <br>
+  <b>OPERATION</b><br>
+KEYS<br>
+s: save png</p>
+</div>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script src="../assets/js/arithmeticXYZ.js"></script>
+<script>
+var width = 800,
+    height = 800,
+    canvas,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    NORTH = 0,
+    NORTHEAST = 1,
+    EAST = 2,
+    SOUTHEAST = 3,
+    SOUTH = 4,
+    SOUTHWEST = 5,
+    WEST = 6,
+    NORTHWEST= 7,
+    stepSize = 1,
+    diameter = 1,
+    direction,
+    posX,
+    posY,
+    colorH = 0,
+    colorS = 100,
+    colorV = 100,
+    colorMode = 3,
+    mousePressed = false,
+    colorH = Math.random() * 360;
+
+var agentCnt = 3,
+    agents = [],
+    colors = [];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = width;
+    context.canvas.height = height;
+
+    posX = width/2;
+    posY = height/2;
+
+    for(var i = 0; i < agentCnt; i++) {
+        agents[i] = new Agent();
+        colors[i] = Math.random() * 360;
+    }
+
+
+
+    clearCanvas();
+}
+
+function draw() {
+    requestAnimationFrame(function() { draw(); });
+
+    for(var i = 0; i < agentCnt; i++) {
+        var p = agents[i].draw();
+        for(var j = 0; j < 200; j++) {
+            var r = (Math.random() * 26 - 13);
+            var t = Math.random() * 360;
+            var _x = p.x + (Math.cos(t) * r);
+            var _y = p.y + (Math.sin(t) * r);
+
+            colorS = (Math.random() < .3) ? 0 : Math.random() * 40 + 60;
+            colorV = 100;
+            var color = hsvToRgb(colors[i], colorS, colorV);
+            var colorRGB = 'rgb('+color.r+','+color.g+','+color.b+')';
+            context.fillStyle = colorRGB;
+
+            context.globalAlpha = Math.random() * 0.4 + 0.2;
+
+            context.beginPath();
+            context.arc(
+                _x+stepSize/2, _y+stepSize/2, diameter,
+                0, Math.PI / 180 * 360, false
+            );
+            context.fill();
+        }
+    }
+
+
+    // if (mousePressed) {
+    //     for(var j = 0; j < 200; j++) {
+    //         var r = (Math.random() * 26 - 13);
+    //         var t = Math.random() * 360;
+    //         var _x = mouseX + (Math.cos(t) * r);
+    //         var _y = mouseY + (Math.sin(t) * r);
+
+    //         colorS = (Math.random() < .3) ? 0 : Math.random() * 40 + 60;
+    //         colorV = 100;
+    //         var color = hsvToRgb(colorH, colorS, colorV);
+    //         var colorRGB = 'rgb('+color.r+','+color.g+','+color.b+')';
+    //         context.fillStyle = colorRGB;
+
+    //         context.globalAlpha = Math.random() * 0.4 + 0.2;
+
+    //         context.beginPath();
+    //         context.arc(
+    //             _x+stepSize/2, _y+stepSize/2, diameter,
+    //             0, Math.PI / 180 * 360, false
+    //         );
+    //         context.fill();
+    //     }
+    // }
+
+}
+
+function hsvToRgb(h, s, v) {
+    h /= 360; s /= 100; v /= 100;
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+
+function clearCanvas() {
+    context.fillStyle = '#fff';
+    context.globalAlpha = 1;
+    context.fillRect(0, 0, width, height);
+}
+
+function map(val, s1, e1, s2, e2) {
+    return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == '1') {clearCanvas(); colorMode = 1;}
+    if (key == '2') {clearCanvas(); colorMode = 2;}
+    if (key == '3') {clearCanvas(); colorMode = 3;}
+});
+
+document.onclick = function (e) {
+};
+
+document.addEventListener('mousedown', (event) => {
+    colorH = Math.random() * 360;
+    mousePressed = true;
+});
+
+document.addEventListener('mouseup', (event) => {
+    mousePressed = false;
+});
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+class Agent {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.v = 0;
+    this.vf = 0;
+    this.r = 0;
+    this.rv = 0;
+    this.rvf = 0;
+    this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    this.vf += random(-0.07, 0.07);
+    this.vf *= 0.99;
+    this.v += this.vf;
+    this.v *= 0.95;
+    this.rvf += random(-0.001, 0.001);
+    this.rvf *= 0.99;
+    this.rv += this.rvf;
+    this.rv*=0.95;
+    this.r += this.rv;
+    var vx = Math.cos(this.r) * this.v;
+    var vy = Math.sin(this.r) * this.v;
+    this.x += vx;
+    this.y += vy;
+
+    this.constrain();
+
+    // context.lineWidth = this.vf * 12 + 1;
+    // context.beginPath();
+    // // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    // context.moveTo(this.oX, this.oY);
+    // context.lineTo(this.x, this.y);
+    // context.stroke();
+    return {x: this.x, y: this.y};
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
+
+setUp();
+draw();
+</script>
+</body>
+</html>

@@ -41,7 +41,8 @@ var width = 800,
     colorH = 0,
     colorS = 100,
     colorV = 100,
-    colorMode = 1;
+    colorMode = 3,
+    mousePressed = false;
 
 function setUp() {
     canvas = document.createElement('canvas');
@@ -90,6 +91,11 @@ function draw() {
         if (posY < 0) posY = height;
         if (posY > height) posY = 0;
 
+        var r = (Math.random() * 40 - 20);
+        var t = Math.random() * 360;
+        posX = mouseX + (Math.cos(t) * r);
+        posY = mouseY + (Math.sin(t) * r);
+
         if (colorMode == 1) {
             colorH = colorH + .01;
             colorS = 100;
@@ -103,9 +109,11 @@ function draw() {
             context.globalAlpha = 1;
         }
         if (colorMode == 3) {
-            colorH = 140;
-            colorS = Math.random() * 100;
-            colorV = Math.random() * 100;
+            colorH = 10;
+            // colorS = Math.random() * 100;
+            // colorV = Math.random() * 100;
+            colorS = (Math.random() < .3) ? 0 : Math.random() * 20 + 80;
+            colorV = 100;
             context.globalAlpha = 1;
         }
 
@@ -164,6 +172,14 @@ document.addEventListener('keydown', (event) => {
 
 document.onclick = function (e) {
 };
+
+document.addEventListener('mousedown', (event) => {
+    mousePressed = true;
+});
+
+document.addEventListener('mouseup', (event) => {
+    mousePressed = false;
+});
 
 document.onmousemove = function (e) {
     if (!e) e = window.event;

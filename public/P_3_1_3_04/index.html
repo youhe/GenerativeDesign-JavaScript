@@ -262,6 +262,66 @@ document.onmousemove = function (e) {
     mouseY = e.clientY;
 };
 
+class Agent {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.oX = this.x;
+    this.oY = this.y;
+    this.v = 0;
+    this.vf = 0;
+    this.r = 0;
+    this.rv = 0;
+    this.rvf = 0;
+    this.friction = 0.9;
+  }
+
+  draw() {
+    this.oX = this.x;
+    this.oY = this.y;
+
+    this.vf += random(-0.07, 0.07);
+    this.vf *= 0.99;
+    this.v += this.vf;
+    this.v *= 0.95;
+    this.rvf += random(-0.001, 0.001);
+    this.rvf *= 0.99;
+    this.rv += this.rvf;
+    this.rv*=0.95;
+    this.r += this.rv;
+    var vx = Math.cos(this.r) * this.v;
+    var vy = Math.sin(this.r) * this.v;
+    this.x += vx;
+    this.y += vy;
+
+    this.constrain();
+
+    context.lineWidth = this.vf * 12 + 1;
+    context.beginPath();
+    // context.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+    context.moveTo(this.oX, this.oY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+  }
+
+  constrain() {
+    if (this.x < 0) {
+      this.x = 0;
+      this.r += Math.PI;
+    } else if (width < this.x) {
+      this.x = width;
+      this.r += Math.PI;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+      this.r += Math.PI;
+    } else if (height < this.y) {
+      this.y = height;
+      this.r += Math.PI;
+    }
+  }
+}
+
 setUp();
 draw();
 </script>
