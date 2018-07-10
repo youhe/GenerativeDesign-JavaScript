@@ -6,7 +6,7 @@ var width = 800,
   mouseY = 0,
   frame = 0,
   drawMode = 0,
-  agentsCnt = 10,
+  agentsCnt = 300,
   agents1 = [],
   agents2 = [];
 

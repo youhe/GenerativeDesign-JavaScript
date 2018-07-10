@@ -48,7 +48,6 @@ class Agent {
     context.strokeStyle = this.color;
     context.globalAlpha = 1;
     context.lineWidth = 2;
-    context.lineWidth = this.y / 400;
     context.beginPath();
     context.moveTo(this.x, this.y);
     context.lineTo(this.ox, this.oy);
