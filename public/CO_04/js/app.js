@@ -6,9 +6,11 @@ var width = 800,
   mouseY = 0,
   frame = 0,
   drawMode = 0,
-  agentsCnt = 200,
-  agents1 = [],
-  agents2 = [];
+  size = 200,
+  rects = [],
+  missCnt = 0,
+  colorH = fRandom(0, 360);
+
 
 function setUp() {
   canvas = document.createElement('canvas');
@@ -21,13 +23,6 @@ function setUp() {
   mouseX = width / 2;
   mouseY = height / 2;
 
-  var col1 = hsvToRgb('code', Math.random() * 360, 100, 100);
-  var col2 = hsvToRgb('code', Math.random() * 360, 100, 100);
-  for (var i = 0; i < agentsCnt; i++) {
-    agents1[i] = new Agent('#' + col1.r + col1.g + col1.b);
-    agents2[i] = new Agent('#' + col2.r + col2.g + col2.b);
-  }
-
   context.fillStyle = '#000';
   context.globalAlpha = 1;
   context.fillRect(0, 0, width, height);
@@ -39,30 +34,45 @@ function draw() {
   requestAnimationFrame(function() { draw(); });
   frame++;
 
-  clearDisplay();
+  for (var j = 0; j < 100; j++) {
+    var x = fRandom(0, width / 10) * 10;
+    var y = fRandom(0, height / 10) * 10;
+    if (50000 / size < missCnt) {
+      missCnt = 0;
+      size = size / 4 * 3;
+      colorH = (colorH + 10) % 360;
+      console.log(size)
+    }
+    if (size < 5) missCnt = 0;
 
-  var x = (Math.cos(frame * 0.021) * 300) + (width / 2);
-  var y = (Math.sin(frame * 0.034) * 300) + (height / 2);
+    var isDraw = true;
+    for (var i = 0; i < rects.length; i++) {
+      if (rects[i]['posX'] <= x + size && x <= rects[i]['posX'] + rects[i]['size']) {
+        if (rects[i]['posY'] <= y + size && y <= rects[i]['posY'] + rects[i]['size']) {
+          isDraw = false;
+          missCnt++;
+        }
+      }
+    }
 
-  context.strokeStyle = '#fff';
-  context.fillStyle = '#fff';
-  context.globalAlpha = 1;
-  context.beginPath();
-  context.arc(x, y, 3, 0, Math.PI * 2, false);
-  // context.fill();
+    if (isDraw) {
+      rects.push(
+        {
+          'posX': x,
+          'posY': y,
+          'size': size,
+        }
+      );
 
-  for (var i = 0; i < agentsCnt; i++) {
-    agents1[i].draw(mouseX, mouseY);
-    agents2[i].draw(mouseX, mouseY);
+      var c1 = hsvToRgb('code', colorH, 60, 40);
+      var c2 = hsvToRgb('code', colorH, 60, 100);
+
+      context.fillStyle = c1;
+      context.fillRect(x + 1, y + 1, size + (size / 30), size + (size / 30));
+      context.fillStyle = c2;
+      context.fillRect(x + 1, y + 1, size - 1, size - 1);
+    }
   }
-}
-
-function clearDisplay() {
-  context.globalCompositeOperation = 'source-over';
-  context.fillStyle = '#000';
-  // context.globalAlpha = .02;
-  context.globalAlpha = 0;
-  context.fillRect(0, 0, width, height);
 }
 
 function toggleText() {

@@ -33,11 +33,10 @@ function hsvToRgb(type, h, s, v) {
       break;
     }
     case 'code': {
-      return {
-        r: ('0'+Math.round(r*255).toString(16)).slice(-2),
-        g: ('0'+Math.round(g*255).toString(16)).slice(-2),
-        b: ('0'+Math.round(b*255).toString(16)).slice(-2)
-      };
+      return '#'
+        + ('0'+Math.round(r*255).toString(16)).slice(-2)
+        + ('0'+Math.round(g*255).toString(16)).slice(-2)
+        + ('0'+Math.round(b*255).toString(16)).slice(-2);
       break;
     }
     case 'hex': {

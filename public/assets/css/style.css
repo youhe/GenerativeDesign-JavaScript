@@ -32,6 +32,9 @@ h1 {
 .operation a {
   color: #06a;
 }
+.col-w .operation a {
+  color: #9cf;
+}
 
 .operation a:hover {
   text-decoration: none;
