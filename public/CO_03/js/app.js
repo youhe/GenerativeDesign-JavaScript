@@ -23,9 +23,10 @@ function setUp() {
 
   var col1 = hsvToRgb('code', Math.random() * 360, 100, 100);
   var col2 = hsvToRgb('code', Math.random() * 360, 100, 100);
+  console.log(col1)
   for (var i = 0; i < agentsCnt; i++) {
-    agents1[i] = new Agent('#' + col1.r + col1.g + col1.b);
-    agents2[i] = new Agent('#' + col2.r + col2.g + col2.b);
+    agents1[i] = new Agent(col1);
+    agents2[i] = new Agent(col2);
   }
 
   context.fillStyle = '#000';
