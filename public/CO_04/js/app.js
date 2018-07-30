@@ -6,11 +6,12 @@ var width = 800,
   mouseY = 0,
   frame = 0,
   drawMode = 0,
-  size = 200,
+  size = 100,
   rects = [],
   missCnt = 0,
-  colorH = fRandom(0, 360);
-
+  colorH = fRandom(0, 360),
+  colorS = fRandom(0, 100),
+  tile = 5;
 
 function setUp() {
   canvas = document.createElement('canvas');
@@ -27,6 +28,12 @@ function setUp() {
   context.globalAlpha = 1;
   context.fillRect(0, 0, width, height);
 
+  for (var i = 0; i < width / tile; i++) {
+    context.fillStyle = '#666';
+    context.fillRect(i * tile, 0, 1, height);
+    context.fillRect(0, i * tile, width, 1);
+  }
+
   draw();
 }
 
@@ -35,15 +42,16 @@ function draw() {
   frame++;
 
   for (var j = 0; j < 100; j++) {
-    var x = fRandom(0, width / 10) * 10;
-    var y = fRandom(0, height / 10) * 10;
-    if (50000 / size < missCnt) {
+    var x = fRandom(-size, (width) / tile) * tile;
+    var y = fRandom(-size, (height) / tile) * tile;
+    if (20000 / size < missCnt) {
       missCnt = 0;
-      size = size / 4 * 3;
-      colorH = (colorH + 10) % 360;
+      // size = size / 4 * 3;
+      size = size - 5;
+      colorS = (colorS + 10) % 100;
       console.log(size)
     }
-    if (size < 5) missCnt = 0;
+    if (size <= 5) missCnt = 0;
 
     var isDraw = true;
     for (var i = 0; i < rects.length; i++) {
@@ -64,13 +72,22 @@ function draw() {
         }
       );
 
-      var c1 = hsvToRgb('code', colorH, 60, 40);
-      var c2 = hsvToRgb('code', colorH, 60, 100);
+      var c1 = hsvToRgb('code', colorS, 50, 40);
+      // var c2 = hsvToRgb('code', colorS, 60, 100);
+      var c2 = hsvToRgb('code', colorH, colorS, 100);
 
-      context.fillStyle = c1;
-      context.fillRect(x + 1, y + 1, size + (size / 30), size + (size / 30));
+      context.fillStyle = '#fff';
+      context.fillRect(x, y, size + 1, size + 1);
       context.fillStyle = c2;
+      context.globalAlpha = .6;
       context.fillRect(x + 1, y + 1, size - 1, size - 1);
+
+      // context.fillStyle = c1;
+      // context.globalAlpha = .7;
+      // context.fillRect(x, y, size + 1, size + 1);
+      // context.fillStyle = c2;
+      // context.globalAlpha = 1;
+      // context.fillRect(x + (size / 4), y + (size / 4), size - (size / 2.1), size - (size / 2.1));
     }
   }
 }
