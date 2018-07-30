@@ -41,9 +41,7 @@ var width = 800,
     colorH = 0,
     colorS = 100,
     colorV = 100,
-    colorMode = 3,
-    mousePressed = false;
-
+    colorMode = 1;
 function setUp() {
     canvas = document.createElement('canvas');
     canvas.id = 'js-canvas';
@@ -51,19 +49,14 @@ function setUp() {
     context = canvas.getContext('2d');
     context.canvas.width = width;
     context.canvas.height = height;
-
     posX = width/2;
     posY = height/2;
-
     clearCanvas();
 }
-
 function draw() {
     requestAnimationFrame(function() { draw(); });
-
     for (var i = 0; i <= mouseX; i++) {
         direction = Math.floor(Math.random() * 8);
-
         if (direction == NORTH) {
             posY -= stepSize;
         } else if (direction == NORTHEAST) {
@@ -85,17 +78,10 @@ function draw() {
             posX -= stepSize;
             posY -= stepSize;
         }
-
         if (posX > width) posX = 0;
         if (posX < 0) posX = width;
         if (posY < 0) posY = height;
         if (posY > height) posY = 0;
-
-        var r = (Math.random() * 40 - 20);
-        var t = Math.random() * 360;
-        posX = mouseX + (Math.cos(t) * r);
-        posY = mouseY + (Math.sin(t) * r);
-
         if (colorMode == 1) {
             colorH = colorH + .01;
             colorS = 100;
@@ -109,18 +95,14 @@ function draw() {
             context.globalAlpha = 1;
         }
         if (colorMode == 3) {
-            colorH = 10;
-            // colorS = Math.random() * 100;
-            // colorV = Math.random() * 100;
-            colorS = (Math.random() < .3) ? 0 : Math.random() * 20 + 80;
-            colorV = 100;
+            colorH = 140;
+            colorS = Math.random() * 100;
+            colorV = Math.random() * 100;
             context.globalAlpha = 1;
         }
-
         var color = hsvToRgb(colorH, colorS, colorV);
         var colorRGB = 'rgb('+color.r+','+color.g+','+color.b+')';
         context.fillStyle = colorRGB;
-
         context.beginPath();
         context.arc(
             posX+stepSize/2, posY+stepSize/2, diameter,
@@ -129,7 +111,6 @@ function draw() {
         context.fill();
     }
 }
-
 function hsvToRgb(h, s, v) {
     h /= 360; s /= 100; v /= 100;
     var r, g, b, i, f, p, q, t;
@@ -152,41 +133,27 @@ function hsvToRgb(h, s, v) {
         b: Math.round(b * 255)
     };
 }
-
 function clearCanvas() {
     context.fillStyle = '#fff';
     context.globalAlpha = 1;
     context.fillRect(0, 0, width, height);
 }
-
 function map(val, s1, e1, s2, e2) {
     return s2 + (e2 - s2) * ((val - s1) / (e1 - s1));
 }
-
 document.addEventListener('keydown', (event) => {
     const key = event.key;
     if (key == '1') {clearCanvas(); colorMode = 1;}
     if (key == '2') {clearCanvas(); colorMode = 2;}
     if (key == '3') {clearCanvas(); colorMode = 3;}
 });
-
 document.onclick = function (e) {
 };
-
-document.addEventListener('mousedown', (event) => {
-    mousePressed = true;
-});
-
-document.addEventListener('mouseup', (event) => {
-    mousePressed = false;
-});
-
 document.onmousemove = function (e) {
     if (!e) e = window.event;
     mouseX = e.clientX;
     mouseY = e.clientY;
 };
-
 setUp();
 draw();
 </script>
