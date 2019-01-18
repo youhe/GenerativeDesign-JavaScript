@@ -1,0 +1,42 @@
+html, body {
+  margin: 0; padding: 0;
+  background: #333;
+}
+body.col-w {
+  color: #fff;
+}
+
+h1 {
+  position: absolute;
+  left: 20px; top: 20px;
+  margin: 0;
+  padding: 0;
+  font-size: 24px;
+  user-select: none;
+}
+
+.operation {
+  position: absolute;
+  left: 20px;
+  top: 60px;
+  padding: 0 0 5px;
+  font-size: 14px;
+  user-select: none;
+}
+
+.operation b {
+  font-size: 16px;
+  line-height: 2;
+}
+
+.operation a {
+  color: #06a;
+}
+.col-w .operation a {
+  color: #9cf;
+}
+
+.operation a:hover {
+  text-decoration: none;
+  opacity: .6;
+}

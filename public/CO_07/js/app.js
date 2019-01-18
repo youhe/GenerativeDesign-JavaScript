@@ -1,40 +1,53 @@
-var frame = 0,
-    cameraR = 1;
+var width = 800,
+  height = 800,
+  canvas,
+  context,
+  oldX = 0,
+  oldY = 0,
+  mouseX = 0,
+  mouseY = 0,
+  frame = 0,
+  drawMode = 0;
 
 function setUp() {
-  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-  camera.position.y = .4;
-  camera.position.z = cameraR;
+  canvas = document.createElement('canvas');
+  canvas.id = 'js-canvas';
+  document.body.appendChild(canvas);
+  context = canvas.getContext('2d');
+  context.canvas.width = width;
+  context.canvas.height = height;
 
-  scene = new THREE.Scene();
+  mouseX = width / 2;
+  mouseY = height / 2;
+  oldX = mouseX;
+  oldY = mouseY;
 
-  geometry = new THREE.BoxGeometry( 0.3, 0.3, 0.3 );
-  material = new THREE.MeshNormalMaterial();
-
-  mesh = new THREE.Mesh( geometry, material );
-  // scene.add( mesh );
-
-  renderer = new THREE.WebGLRenderer( { antialias: true } );
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  document.body.appendChild( renderer.domElement );
-
-  var helper = new THREE.PolarGridHelper(.6, .6, 8, 64);
-  helper.position.y = -.6;
-  scene.add(helper);
+  context.fillStyle = '#000';
+  context.globalAlpha = 1;
+  context.fillRect(0, 0, width, height);
 
   draw();
 }
 
 function draw() {
   requestAnimationFrame(function() { draw(); });
-
   frame++;
 
-  camera.position.x = Math.cos(frame * 0.01) * cameraR;
-  camera.position.z = Math.sin(frame * 0.01) * cameraR;
-  camera.lookAt(0, 0, 0);
+  mouseX = Math.cos(frame * 0.01) * 200 + Math.cos(frame * 0.013 + 50) * 100 + (width / 2);
+  mouseY = Math.sin(frame * 0.01) * 200 + Math.sin(frame * 0.013 + 50) * 100 + (height / 2);
 
-  renderer.render(scene, camera);
+  if (frame % 1 == 0) {
+    context.strokeStyle = '#fff';
+    context.globalAlpha = 0.1;
+    context.lineWidth = dist(oldX, oldY, mouseX, mouseY) / 10;
+    context.beginPath();
+    context.moveTo(oldX, oldY);
+    context.lineTo(mouseX, mouseY);
+    context.stroke();
+
+    oldX = (mouseX - oldX) * 0.01 + oldX;
+    oldY = (mouseY - oldY) * 0.01 + oldY;
+  }
 }
 
 function toggleText() {
@@ -66,8 +79,8 @@ document.onclick = function (e) {
 
 document.onmousemove = function (e) {
   if (!e) e = window.event;
-  mouseX = e.clientX;
-  mouseY = e.clientY;
+  // mouseX = e.clientX;
+  // mouseY = e.clientY;
 };
 
 window.addEventListener('load', setUp);

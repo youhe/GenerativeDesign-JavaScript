@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>P_1_2_3_04 - i</title>
+<link href="../assets/img/favicon.ico" type="image/x-icon" rel="icon"/>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<h1>P_1_2_3_04 - i</h1>
+<p class="operation">
+<b>OPERATION</b><br>
+MOUSE<br>
+left click: switch resolution<br>
+<br>
+KEYS<br>
+t: change type<br>
+s: save png<br>
+</p>
+<script src="../assets/js/downloadCanvas.js"></script>
+<script>
+var canvas,
+    canvasW = 512,
+    canvasH = 512,
+    context,
+    mouseX = 0,
+    mouseY = 0,
+    hueValues = [],
+    saturationValues = [],
+    brightnessValues = [],
+    rgbValues = [],
+    colorCount = 20,
+    typeIndex = 0,
+    types = ['rect', 'strokeRect', 'arc', 'strokeArc'];
+
+function setUp() {
+    canvas = document.createElement('canvas');
+    canvas.id = 'js-canvas';
+    document.body.appendChild(canvas);
+    context = canvas.getContext('2d');
+    context.canvas.width = canvasW;
+    context.canvas.height = canvasH;
+}
+
+function draw() {
+    context.globalCompositeOperation = 'source-over';
+    context.fillStyle = '#000';
+    context.fillRect(0, 0, canvasW, canvasH);
+
+    var colorArr = ['#f00', '#0f0', '#00f'];
+    for (var i = 0; i < colorArr.length; i++) {
+        for (var j = 0; j < 10; j++) {
+            if (types[typeIndex] == 'rect') {
+                context.fillStyle = colorArr[i];
+                context.globalCompositeOperation = 'screen';
+                context.fillRect(
+                    canvasW * Math.random(),
+                    canvasH * Math.random(),
+                    200 * Math.random(),
+                    80 * Math.random(),
+                );
+            }
+            if (types[typeIndex] == 'strokeRect') {
+                context.fillStyle = colorArr[i];
+                context.globalCompositeOperation = 'screen';
+                var x = canvasW * Math.random();
+                var y = canvasH * Math.random();
+                var w = 200 * Math.random();
+                var h = 80 * Math.random();
+                context.fillRect(x, y, w, h);
+
+                context.fillStyle = '#000';
+                context.globalCompositeOperation = 'source-over';
+                context.fillRect(
+                    x + (w * 0.15),
+                    y + (h * 0.15),
+                    w * 0.7,
+                    h * 0.7
+                );
+            }
+            if (types[typeIndex] == 'arc') {
+              context.fillStyle = colorArr[i];
+              context.globalCompositeOperation = 'screen';
+              context.beginPath();
+              context.arc(
+                  canvasW * Math.random(),
+                  canvasH * Math.random(),
+                  60 * Math.random(),
+                  0, Math.PI * 2, false
+              );
+              context.fill();
+            }
+            if (types[typeIndex] == 'strokeArc') {
+                context.fillStyle = colorArr[i];
+                context.globalCompositeOperation = 'screen';
+                var x = canvasW * Math.random();
+                var y = canvasH * Math.random();
+                var r = 60 * Math.random();
+                context.beginPath();
+                context.arc(x, y, r, 0, Math.PI * 2, false);
+                context.fill();
+
+                context.fillStyle = '#000';
+                context.globalCompositeOperation = 'source-over';
+                context.beginPath();
+                context.arc(x, y, r * 0.85, 0, Math.PI * 2, false);
+                context.fill();
+            }
+        }
+    }
+}
+
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key == 't') {
+        typeIndex = (typeIndex + 1) % 4;
+    }
+});
+
+
+document.onclick = function (e) {
+    draw();
+};
+
+document.onmousemove = function (e) {
+    if (!e) e = window.event;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+};
+
+setUp();
+draw();
+</script>
+</body>
+</html>
